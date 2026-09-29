@@ -202,6 +202,28 @@ h3 { font-size: var(--t-lg); }
 .why { background: var(--accent-soft); border-radius: 10px; padding: 18px 22px; display: grid; grid-template-columns: auto 1fr; gap: 6px 20px; align-items: baseline; }
 .why p { color: var(--ink); }
 
+/* ---------- Workflow diagram ---------- */
+.diagram { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+.diagram-scroll { overflow-x: auto; }
+.diagram svg { display: block; width: 100%; min-width: 720px; height: auto; color: var(--muted); }
+.dg-box { stroke-width: 1.5; }
+.dg-model { fill: var(--accent-soft); stroke: var(--accent); }
+.dg-script { fill: var(--surface); stroke: var(--muted); }
+.dg-you { fill: var(--nice-soft); stroke: var(--nice); }
+.dg-input { fill: none; stroke: var(--muted); stroke-dasharray: 4 3; }
+.dg-stack { fill: var(--surface); stroke: var(--accent); stroke-width: 1; }
+.dg-title { fill: var(--ink); font: 600 13px var(--f-body); }
+.dg-sub { fill: var(--muted); font: 400 11px var(--f-body); }
+.dg-tag { font: 500 9.5px var(--f-mono); letter-spacing: .08em; text-transform: uppercase; }
+.dg-tag.model { fill: var(--accent); }
+.dg-tag.script { fill: var(--muted); }
+.dg-tag.you { fill: var(--nice); }
+.dg-edge { font: 400 10.5px var(--f-mono); fill: var(--muted); }
+.dg-loop { font: 400 10.5px var(--f-mono); fill: var(--ask); }
+.dg-line { stroke: currentColor; stroke-width: 1.5; fill: none; }
+.dg-line.loop { stroke: var(--ask); stroke-dasharray: 5 4; }
+.diagram figcaption { font-size: var(--t-sm); color: var(--muted); max-width: 70ch; }
+
 /* ---------- Triage table ---------- */
 .legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--t-sm); color: var(--muted); }
 .tag { display: inline-block; font-family: var(--f-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: .07em; padding: 3px 8px; border-radius: 4px; white-space: nowrap; font-weight: 500; }
@@ -460,6 +482,19 @@ td.target { color: var(--accent); font-weight: 600; }
         <span class="label">Why an agent</span>
         <p>A keyword search can't interpret vague requests, weigh must-haves against nice-to-haves, map synonyms and similar technologies, explain its reasoning with evidence, or ask a clarifying question.</p>
       </div>
+    </section>
+
+    <!-- 5b -->
+    <section class="slide" data-title="Workflow" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Agent design · Workflow</p>
+        <h2>One run, from request to report</h2>
+        <p class="lede">Model steps interpret and write. Scripts link, verify and rank, so the same assessments always give the same ranking. You decide twice.</p>
+      </div>
+      <figure class="diagram">
+        <div class="diagram-scroll"><svg viewBox="0 0 1000 340" role="img" aria-label="Workflow of one /match-request run: prepare data, triage, your confirmation, parallel CV assessment, quote verification, deterministic ranking, report writing and check, then your decision."><defs><marker id="dg-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="dg-arrow-loop" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--ask)" style="fill: var(--ask)"/></marker></defs><rect class="dg-box dg-input" x="10" y="10" width="150" height="40" rx="4"/><text class="dg-sub" x="85" y="34" text-anchor="middle">CVs + team list (Excel)</text><rect class="dg-box dg-input" x="250" y="10" width="150" height="40" rx="4"/><text class="dg-sub" x="325" y="34" text-anchor="middle">Staffing request</text><line class="dg-line" x1="85" y1="50" x2="85" y2="100" marker-end="url(#dg-arrow)"/><line class="dg-line" x1="325" y1="50" x2="325" y2="100" marker-end="url(#dg-arrow)"/><rect class="dg-box dg-script" x="10" y="100" width="150" height="70" rx="3"/><text class="dg-tag script" x="22" y="118">script</text><text class="dg-title" x="22" y="139">Prepare data</text><text class="dg-sub" x="22" y="157">link CVs by name</text><rect class="dg-box dg-model" x="250" y="100" width="150" height="70" rx="14"/><text class="dg-tag model" x="262" y="118">model</text><text class="dg-title" x="262" y="139">Triage request</text><text class="dg-sub" x="262" y="157">key · nice · baseline</text><rect class="dg-box dg-you" x="490" y="100" width="150" height="70" rx="8"/><text class="dg-tag you" x="502" y="118">you</text><text class="dg-title" x="502" y="139">Confirm triage</text><text class="dg-sub" x="502" y="157">or correct it</text><rect class="dg-stack" x="742" y="88" width="150" height="70" rx="14"/><rect class="dg-stack" x="736" y="94" width="150" height="70" rx="14"/><rect class="dg-box dg-model" x="730" y="100" width="150" height="70" rx="14"/><text class="dg-tag model" x="742" y="118">model · parallel</text><text class="dg-title" x="742" y="139">Assess every CV</text><text class="dg-sub" x="742" y="157">quote per requirement</text><line class="dg-line" x1="160" y1="135" x2="248" y2="135" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="205.0" y="127" text-anchor="middle">manifest</text><line class="dg-line" x1="400" y1="135" x2="488" y2="135" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="445.0" y="127" text-anchor="middle">request.json</text><line class="dg-line" x1="640" y1="135" x2="728" y2="135" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="685.0" y="127" text-anchor="middle">confirmed</text><path class="dg-line loop" d="M520 100 C 520 70, 370 70, 370 98" marker-end="url(#dg-arrow-loop)"/><text class="dg-loop" x="445.0" y="72" text-anchor="middle">changes</text><line class="dg-line" x1="785" y1="170" x2="785" y2="248" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="777" y="214.0" text-anchor="end">assessments</text><line class="dg-line loop" x1="835" y1="250" x2="835" y2="172" marker-end="url(#dg-arrow-loop)"/><text class="dg-loop" x="843" y="208.0">quote not found:</text><text class="dg-loop" x="843" y="222.0">re-assess once</text><rect class="dg-box dg-script" x="730" y="250" width="150" height="70" rx="3"/><text class="dg-tag script" x="742" y="268">script</text><text class="dg-title" x="742" y="289">Verify quotes</text><text class="dg-sub" x="742" y="307">quote in CV text?</text><rect class="dg-box dg-script" x="490" y="250" width="150" height="70" rx="3"/><text class="dg-tag script" x="502" y="268">script</text><text class="dg-title" x="502" y="289">Rank candidates</text><text class="dg-sub" x="502" y="307">tiers · no seniority</text><rect class="dg-box dg-model" x="250" y="250" width="150" height="70" rx="14"/><text class="dg-tag model" x="262" y="268">model + script</text><text class="dg-title" x="262" y="289">Write report</text><text class="dg-sub" x="262" y="307">checked for coverage</text><rect class="dg-box dg-you" x="10" y="250" width="150" height="70" rx="8"/><text class="dg-tag you" x="22" y="268">you</text><text class="dg-title" x="22" y="289">Decide</text><text class="dg-sub" x="22" y="307">selection · seniority mix</text><line class="dg-line" x1="730" y1="285" x2="642" y2="285" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="685.0" y="277" text-anchor="middle">verified</text><line class="dg-line" x1="490" y1="285" x2="402" y2="285" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="445.0" y="277" text-anchor="middle">ranking.json</text><line class="dg-line" x1="250" y1="285" x2="162" y2="285" marker-end="url(#dg-arrow)"/><text class="dg-edge" x="205.0" y="277" text-anchor="middle">report</text></svg></div>
+        <figcaption>Blue: model steps. Grey: deterministic scripts. Teal: your decisions. Dashed amber arrows are the two correction loops: triage changes before matching, and re-assessment when a quote can't be found in the CV.</figcaption>
+      </figure>
     </section>
 
     <!-- 6 -->
