@@ -287,6 +287,33 @@ td.target { color: var(--accent); font-weight: 600; }
 .next li::before { content: counter(nx, decimal-leading-zero); font-family: var(--f-mono); font-size: var(--t-sm); color: var(--accent); }
 .next li span { display: block; color: var(--muted); font-size: var(--t-sm); }
 
+/* ---------- Change plan ---------- */
+.plan-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+.example { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.example-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.3fr); gap: 10px; align-items: center; }
+.example-cell { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.example-cell b { font-family: var(--f-mono); font-size: var(--t-sm); font-weight: 500; }
+.example-arrow { color: var(--muted); font-family: var(--f-mono); }
+.example p { font-size: var(--t-sm); color: var(--muted); }
+.stakeholders { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.stakeholders ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.stakeholders li { display: flex; flex-direction: column; gap: 2px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.stakeholders li:last-child { border-bottom: 0; padding-bottom: 0; }
+.stakeholders li span { color: var(--muted); font-size: var(--t-sm); }
+.stakeholders li.new-stake b::after { content: "New"; font-family: var(--f-mono); font-size: .66rem; letter-spacing: .08em; text-transform: uppercase; color: var(--nice); margin-left: 8px; }
+.phases { list-style: none; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; counter-reset: ph; }
+.phases li { counter-increment: ph; border-top: 2px solid var(--accent); padding-top: 12px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.phases li::before { content: "Phase " counter(ph); font-family: var(--f-mono); font-size: var(--t-xs); color: var(--accent); text-transform: uppercase; letter-spacing: .08em; }
+.phases li b { font-size: var(--t-md); }
+.phases li span { color: var(--muted); font-size: var(--t-sm); }
+@media (max-width: 1000px) { .phases { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) {
+  .plan-grid { grid-template-columns: minmax(0, 1fr); }
+  .example-row { grid-template-columns: minmax(0, 1fr); }
+  .example-arrow { transform: rotate(90deg); justify-self: start; }
+  .phases { grid-template-columns: minmax(0, 1fr); }
+}
+
 /* ---------- Controls ---------- */
 .controls {
   grid-column: 2;
@@ -643,6 +670,53 @@ td.target { color: var(--accent); font-weight: 600; }
             <li><b>Build and test the prototype</b><span>Run it on the test cases and compare with past picks.</span></li>
           </ol>
         </div>
+      </div>
+    </section>
+
+    <!-- 13 -->
+    <section class="slide" data-title="Change plan" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Change plan · How we go forward</p>
+        <h2>Build on Magda's solution</h2>
+        <p class="lede">Magda's team already runs a solution with a similar goal. Instead of building a second one, we add what ours does differently: people who are almost a match stay on the list.</p>
+      </div>
+      <div class="plan-grid">
+        <div class="stack">
+          <p class="label">What this pilot adds</p>
+          <ul class="list">
+            <li><span><strong>Near matches stay visible.</strong> A related skill counts as partly met, so the person is listed with an explanation instead of being filtered out.</span></li>
+            <li><span><strong>Every match is backed by the CV.</strong> A quote per requirement, checked by a script.</span></li>
+            <li><span><strong>Priorities come from the request.</strong> Key, nice to have or baseline. Language gaps are flagged, never used to exclude.</span></li>
+          </ul>
+          <div class="example" aria-label="Example of a partial match">
+            <div class="example-row">
+              <div class="example-cell"><span class="label">Request asks for</span><b>RabbitMQ</b></div>
+              <span class="example-arrow" aria-hidden="true">→</span>
+              <div class="example-cell"><span class="label">CV shows</span><b>ActiveMQ</b></div>
+              <span class="example-arrow" aria-hidden="true">→</span>
+              <div class="example-cell"><span class="label">Assessment</span><span><span class="tag ask">Partly met</span></span></div>
+            </div>
+            <p>A strict filter drops this person. Our assessment keeps them on the list, with the CV quote and the note "related message broker", so you and the requester can decide.</p>
+          </div>
+        </div>
+        <aside class="stakeholders" aria-label="Stakeholders">
+          <p class="label">Stakeholders</p>
+          <ul>
+            <li class="new-stake"><b>Magda and her team</b><span>Own the existing solution. Decide with us how the partial-match assessment is integrated.</span></li>
+            <li><b>Resource manager</b><span>Owner of this pilot and first user. Provides test cases and judges the results.</span></li>
+            <li><b>Project leads and bid teams</b><span>Send the requests. Receive shortlists that include near matches with explanations.</span></li>
+            <li><b>Data protection and works council</b><span>Approve how CVs and availability data are processed.</span></li>
+          </ul>
+        </aside>
+      </div>
+      <div class="stack">
+        <p class="label">Steps</p>
+        <ol class="phases">
+          <li><b>Align with Magda's team</b><span>Demo the pilot and run both solutions on the same requests. Compare where the results differ.</span></li>
+          <li><b>Agree the target setup</b><span>Integrate the partial-match assessment and the evidence check into the existing solution, or add them as a separate step.</span></li>
+          <li><b>Pilot on real data</b><span>Back-test on 10 past requests against the KPIs: time to shortlist, recall, no unsupported claims.</span></li>
+          <li><b>Hand over and scale</b><span>Share the rules, guardrails and skill vocabulary, then open it to other groups.</span></li>
+        </ol>
       </div>
     </section>
 

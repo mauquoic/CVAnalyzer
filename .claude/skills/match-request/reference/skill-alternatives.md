@@ -18,4 +18,5 @@ Used when triaging "or similar" and when assessing CVs. Extend this list when yo
 | TypeScript / Angular | Angular (2+), AngularJS (partly: outdated), TypeScript | React, Vue, Svelte (for "Angular": partly met) |
 | Git workflow | Git, GitHub, GitLab, Bitbucket, Azure DevOps Repos, pull/merge requests, code reviews | SVN (partly) |
 | AI tooling in the SDLC | GitHub Copilot, Claude Code, Cursor, Codeium, AI-assisted testing or code review, LLM integration | Machine learning projects (partly) |
+| Message brokers (e.g. RabbitMQ) | the named broker, e.g. RabbitMQ | ActiveMQ, Artemis, IBM MQ, Kafka, Azure Service Bus, AWS SQS (partly met unless "or similar") |
 | Agile | Scrum, Kanban, SAFe | |
