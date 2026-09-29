@@ -1,0 +1,3 @@
+# Generated match reports contain assessments of people; keep them local.
+reports/*
+!reports/README.md

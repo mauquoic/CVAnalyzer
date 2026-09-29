@@ -4,15 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-CVAnalyzer is at the specification stage of an agentic enablement lab. There is no application code, build, lint or test setup yet. Don't write implementation code until the build plan has been agreed with the user. The open questions in `docs/use-case.md` §8 have to be answered first.
+CVAnalyzer is at the specification stage of an agentic enablement lab. There is no application code, build, lint or test setup yet. Don't write implementation code until the build plan has been agreed with the user. Decisions are in `docs/use-case.md` §8, and the remaining open questions are in §9.
 
 ## Use case: CV Match Agent
 
-**Goal:** turn a staffing request (skills, experience, languages, headcount, seniority mix, optional availability) into a shortlist of people from the resource manager's group of about 80. Every match is backed by evidence from the person's CV. The resource manager makes the final decision.
+**Goal:** turn a staffing request (skills, experience, languages, headcount, optional availability) into a Markdown report with a shortlist of people from the resource manager's group of about 80. Every match is backed by evidence from the person's CV. The resource manager makes the final decision. The agent runs in Claude Code in this repository. There is no separate UI.
 
 - `docs/use-case.md` is the source of truth for behavior: capabilities, output contents, edge cases, acceptance criteria and open questions. Read it before designing or changing agent behavior.
 - `docs/cv-match-agent-brief.html` is the pitch deck. It's the same use case, written for people.
-- The reference test case is the RFP request on the deck's "The problem today · Real request" slide: 4 fullstack developers, 2 senior and 2 more junior, German and English, 9 skill lines.
+- The reference test case is the RFP request on the deck's "The problem today · Real request" slide: 4 fullstack developers, German and English, 9 skill lines.
 
 ### Constraints (non-negotiable)
 
@@ -20,14 +20,33 @@ CVAnalyzer is at the specification stage of an agentic enablement lab. There is 
 - **Evidence or no credit.** A requirement counts as met only with a CV quote. Inferred values are marked as inferred.
 - **No protected attributes** (age, gender, nationality, photo, family status…) in matching or reasoning.
 - **Complete coverage.** Every person on the team list is assessed, or listed as not assessed with a reason.
-- **Never guess silently.** For ambiguous or contradictory requests, ask a question with a proposed default.
-- **Personal data.** Never commit real CVs, team lists or availability data to this repo. Use anonymised or synthetic samples for development and tests.
+- **Never guess silently.** State every assumption in the report. For contradictions in hard requirements, ask with a proposed default.
+- **Seniority is not ranked.** A requested seniority mix is recorded, but candidates are ranked by fit only. At most, add a labelled seniority indication as a note.
+- **Language gaps don't exclude.** A person who meets everything except a required language stays in the shortlist, with the note "language may be an issue: discuss with the requester".
+- **Personal data.** Only anonymised CVs and a pseudonymised team list go into `data/`. Generated reports in `reports/` are gitignored and never committed.
 
 ### Conventions
 
 - Requirement triage uses exactly three classes: **Key**, **Nice to have** (alternatives accepted) and **Baseline** (expected, tie-breaker only).
 - Per-requirement assessment uses exactly three states: **met**, **partly met** and **not evidenced**.
 - Output language follows the request language (English or German). CVs in either language are matched.
+- Defaults: "German/English" means both required, a CV older than 12 months is flagged as outdated, and a missing headcount means 1 person.
+
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `.claude/skills/` | Claude Code skills (one folder per skill with `SKILL.md`) |
+| `.claude/agents/` | Claude Code subagents (one Markdown file per agent) |
+| `tools/` | Helper scripts the agent calls (e.g. CV text extraction, reading the team list) |
+| `templates/` | Report template(s) |
+| `data/cvs/` | Anonymised CVs, one file per person, linked to the team list by ID |
+| `data/team/` | Team list with availability |
+| `data/requests/` | Staffing requests to run the agent on |
+| `reports/` | Generated Markdown reports (gitignored) |
+| `tests/cases/` | Past requests with the actual picks, for back-testing |
+
+Most folders only hold a README describing what belongs there until the build plan is agreed.
 
 ## The brief deck (`docs/cv-match-agent-brief.html`)
 
