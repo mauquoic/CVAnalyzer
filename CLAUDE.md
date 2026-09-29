@@ -2,59 +2,65 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project status
+## What this is
 
-CVAnalyzer is at the specification stage of an agentic enablement lab. There is no application code, build, lint or test setup yet. Don't write implementation code until the build plan has been agreed with the user. Decisions are in `docs/use-case.md` §8, and the remaining open questions are in §9.
+The **CV Match Agent** runs in Claude Code. `/match-request <request>` turns a staffing request (skills, experience, languages, headcount, optional availability) into a Markdown report in `reports/`. The report holds a shortlist of people from the resource manager's group of about 80, with every match backed by a quote from the person's CV. The resource manager makes the final decision. There is no separate UI.
 
-## Use case: CV Match Agent
+Read these before changing agent behavior:
+- `docs/use-case.md`: what the agent does, edge cases, acceptance criteria, decisions and open questions.
+- `docs/guardrails.md`: the limits it works within and how each is enforced. If the two conflict, the guardrails win.
+- `docs/cv-match-agent-brief.html`: the pitch deck (see below).
 
-**Goal:** turn a staffing request (skills, experience, languages, headcount, optional availability) into a Markdown report with a shortlist of people from the resource manager's group of about 80. Every match is backed by evidence from the person's CV. The resource manager makes the final decision. The agent runs in Claude Code in this repository. There is no separate UI.
+## Commands
 
-- `docs/use-case.md` is the source of truth for behavior: capabilities, output contents, edge cases, acceptance criteria and open questions. Read it before designing or changing agent behavior.
-- `docs/cv-match-agent-brief.html` is the pitch deck. It's the same use case, written for people.
-- The reference test case is the RFP request on the deck's "The problem today · Real request" slide: 4 fullstack developers, German and English, 9 skill lines.
+```bash
+python3 -m unittest discover -s tests                              # all tests (synthetic fixtures, no real data)
+python3 -m unittest tests.test_tools.ToolsTest.test_rank_order     # one test
+python3 tools/prepare_data.py                                      # link team list and CVs, extract text into .work/
+python3 tools/verify_evidence.py .work/runs/<run-id> [--fix]       # check assessment quotes against CV text
+python3 tools/rank.py .work/runs/<run-id>                          # rank and propose a team -> ranking.json
+python3 tools/check_report.py reports/<run-id>.md .work/runs/<run-id>
+```
 
-### Constraints (non-negotiable)
+The tools use only the Python standard library for `.pptx`, `.docx` and `.xlsx`. `pip install -r requirements.txt` (pypdf) is needed only for PDF CVs. `pypdf` is also picked up from a project `.venv/` if the system install is broken. `requirements-dev.txt` is needed only to regenerate the fixtures with `tests/fixtures/make_fixtures.py`. Set `CVMATCH_WORK` to point the tools at a different work folder (the tests do this).
 
-- **Recommend only.** Never contact people, and never write to CV, HR or planning systems. Availability is read-only and only checked when the request needs it.
-- **Evidence or no credit.** A requirement counts as met only with a CV quote. Inferred values are marked as inferred.
-- **No protected attributes** (age, gender, nationality, photo, family status…) in matching or reasoning.
-- **Complete coverage.** Every person on the team list is assessed, or listed as not assessed with a reason.
-- **Never guess silently.** State every assumption in the report. For contradictions in hard requirements, ask with a proposed default.
-- **Seniority is not ranked.** A requested seniority mix is recorded, but candidates are ranked by fit only. At most, add a labelled seniority indication as a note.
-- **Language gaps don't exclude.** A person who meets everything except a required language stays in the shortlist, with the note "language may be an issue: discuss with the requester".
-- **Personal data.** Only anonymised CVs and a pseudonymised team list go into `data/`. Generated reports in `reports/` are gitignored and never committed.
+## How a run works
 
-### Conventions
+The `/match-request` skill (`.claude/skills/match-request/SKILL.md`) orchestrates the run. Model judgment and deterministic code are deliberately split:
 
-- Requirement triage uses exactly three classes: **Key**, **Nice to have** (alternatives accepted) and **Baseline** (expected, tie-breaker only).
-- Per-requirement assessment uses exactly three states: **met**, **partly met** and **not evidenced**.
-- Output language follows the request language (English or German). CVs in either language are matched.
-- Defaults: "German/English" means both required, a CV older than 12 months is flagged as outdated, and a missing headcount means 1 person.
+1. **`prepare_data.py`** reads the Excel team list (`data/team/`) and the PowerPoint CVs (`data/cvs/`). It links CVs to people by fuzzy name matching, which tolerates middle names, umlaut spellings and word order. It writes `.work/cvs/<key>.txt` and `.work/manifest.json`. The person key is the team list's ID column if present, otherwise a slug of the name. Unlinkable or ambiguous files are reported, never guessed. `data/team/cv_links.json` overrides links and `data/team/columns.json` maps column headers.
+2. **Triage** (model): the request becomes `.work/runs/<run-id>/request.json` (schema in `reference/request-schema.md`, rules in `reference/triage-guide.md`). It is confirmed by the user once.
+3. **`cv-assessor` subagents** (`.claude/agents/cv-assessor.md`), run in parallel batches of about 8. Each writes `assessments/<key>.json` with met / partly met / not evidenced per requirement, plus verbatim quotes.
+4. **`verify_evidence.py`** rejects any quote not found in the CV text. `--fix` downgrades what can't be verified.
+5. **`rank.py`** ranks deterministically: tiers full → language_gap → partial → weak, then points. Seniority is never used. It proposes a team and lists gaps. The report must not re-order this.
+6. **Report** (model) from `templates/match-report.md`, then **`check_report.py`** blocks on missing people or leftover placeholders, and warns on protected-attribute wording.
 
-## Repository layout
+## Conventions
 
-| Path | Contents |
-|---|---|
-| `.claude/skills/` | Claude Code skills (one folder per skill with `SKILL.md`) |
-| `.claude/agents/` | Claude Code subagents (one Markdown file per agent) |
-| `tools/` | Helper scripts the agent calls (e.g. CV text extraction, reading the team list) |
-| `templates/` | Report template(s) |
-| `data/cvs/` | Anonymised CVs, one file per person, linked to the team list by ID |
-| `data/team/` | Team list with availability |
-| `data/requests/` | Staffing requests to run the agent on |
-| `reports/` | Generated Markdown reports (gitignored) |
-| `tests/cases/` | Past requests with the actual picks, for back-testing |
+- **Triage classes:** Key, Nice to have (alternatives accepted), Baseline (tie-breaker only). In JSON: `key`, `nice`, `baseline`.
+- **Assessment states:** `met`, `partly met`, `not evidenced`. Points 1 / 0.5 / 0.
+- **Languages:** each required language is its own requirement with `kind: "language"`. That's how `rank.py` recognises a language gap. A language gap never excludes anyone. It adds the note "language may be an issue: discuss with the requester".
+- **Defaults:** "German/English" means both required. A CV older than 12 months is outdated. A missing headcount means 1 person. Defaults are always stated in the report as assumptions.
+- **Run ids:** `YYYY-MM-DD-<short-slug>`. The work files are in `.work/runs/<run-id>/` and the report is `reports/<run-id>.md`.
+- **Report language:** follows the request's language (English or German). Evidence quotes stay in the CV's language.
+- **Shared vocabulary:** `reference/skill-alternatives.md` holds synonyms and accepted alternatives. Extend it rather than hard-coding equivalences in prompts.
+- **New agent behavior** belongs in a skill or subagent. Anything that must be exact (matching rules, ranking, checks) belongs in `tools/` with a test in `tests/test_tools.py` on the synthetic fixtures.
 
-Most folders only hold a README describing what belongs there until the build plan is agreed.
+## Guardrails (short version of `docs/guardrails.md`)
+
+- **Recommend only.** Never contact anyone. Never change `data/` (enforced by a deny rule in `.claude/settings.json`). No web lookups of people (WebSearch and WebFetch are denied).
+- **Evidence or no credit.** Quotes are verbatim and verified by script.
+- **No protected attributes** (age, gender, nationality, family, religion, health, photo, anything inferred from a name) in matching or reasoning.
+- **Complete coverage.** Every person on the team list appears in the report.
+- **Seniority** is recorded, never ranked. At most there is a labelled indication with a quote.
+- **Personal data.** `data/cvs/`, `data/team/`, `data/requests/` (except the example), `reports/` and `.work/` are gitignored. Never commit real CVs, names or reports. `tests/fixtures/` is synthetic.
 
 ## The brief deck (`docs/cv-match-agent-brief.html`)
 
 It's a single self-contained HTML file, presented as a click-through deck. It's also published as a claude.ai Artifact: https://claude.ai/artifact/Ltdmt8bphszgu2wEYNk7Da. Republishing the same file updates that link.
 
-- **No document skeleton.** The file has no `<!doctype>`, `<html>`, `<head>` or `<body>` tags, because the Artifact publisher adds them. Keep it that way. Explicit rules like `.slide[hidden] { display: none; }` make it also render correctly when opened locally.
-- **Slides.** Each slide is a `<section class="slide" data-title="…">` inside `<main id="stage">`. All slides except the first carry `hidden`. The inline script at the bottom builds the left-rail table of contents from `data-title` and assigns ids `s1…sN`. It also handles the Back/Next buttons, arrow/PageUp/PageDown/Home/End keys and `#sN` deep links. To add or reorder slides, edit the sections only. The counter and TOC update automatically.
-- **Theming.** All colors are tokens on `:root`, redefined twice for dark mode (the `prefers-color-scheme` block and `:root[data-theme="dark"]`). A new color must be added to all three blocks.
-- **Placeholders.** Values still to be supplied use `<span class="fill">[…]</span>`, shown as dashed amber chips. Run `grep -n 'class="fill"'` to find any that remain.
-- **Embedded image.** The original request email is embedded as a base64 WebP data URI. Avoid printing that line in full when reading the file.
-- **External resources.** Fonts load from Google Fonts only. Everything else is inline, as required by the Artifact CSP.
+- **No document skeleton.** The file has no `<!doctype>`, `<html>`, `<head>` or `<body>` tags, because the Artifact publisher adds them. `.slide[hidden] { display: none; }` keeps it working when opened locally.
+- **Slides.** Each slide is a `<section class="slide" data-title="…">`, and all but the first carry `hidden`. The inline script builds the table of contents, the counter, keyboard navigation and `#sN` deep links from the sections.
+- **Theming.** Colors are tokens on `:root`, redefined in both dark-mode blocks. A new color must be added to all three.
+- **Embedded image.** The original request email is a base64 WebP data URI. Avoid printing that line in full.
+- **External resources.** Fonts load from Google Fonts only. Everything else is inline (Artifact CSP).

@@ -408,7 +408,7 @@ td.target { color: var(--accent); font-weight: 600; }
           <ol class="hard">
             <li><span><strong>Four people, not one,</strong> and they have to work as a team.</span></li>
             <li><span><strong>Nine skill lines with "or" and "similar".</strong> Many valid combinations, no clear priority.</span></li>
-            <li><span><strong>A built-in tension.</strong> "More than 5 years" and "2 more junior" need interpreting.</span></li>
+            <li><span><strong>A seniority mix is requested,</strong> but "2 more junior, 2 more senior" is hard to read from CVs. It needs a person who knows the team.</span></li>
             <li><span><strong>Availability doesn't filter anyone out,</strong> so the whole group has to be reviewed.</span></li>
           </ol>
           <div class="calc" aria-label="Manual effort">
@@ -453,12 +453,12 @@ td.target { color: var(--accent); font-weight: 600; }
         <li class="new"><span class="num">Step 2 <em>Key step</em></span><h3>Triage the requirements</h3><p>Decides what is probably key, what is a nice-to-have, and where alternatives are acceptable. Asks when something is unclear.</p></li>
         <li><span class="num">Step 3</span><h3>Check availability</h3><p>Reads availability from the planning system when the request needs it. Skips this step when it doesn't, as in the RFP example.</p></li>
         <li><span class="num">Step 4</span><h3>Score every CV with evidence</h3><p>Scores each person per requirement and quotes the CV text behind it. No evidence, no credit.</p></li>
-        <li><span class="num">Step 5</span><h3>Build the team</h3><p>Ranked shortlist per role, a proposed team combination, and gaps such as "nobody has Spark and 10+ years".</p></li>
+        <li><span class="num">Step 5</span><h3>Build the team</h3><p>Ranked shortlist per role, a proposed team, and gaps such as "nobody has Spark and 10+ years". A Markdown report you can review.</p></li>
         <li><span class="num">Step 6</span><h3>Hand over to you</h3><p>You review, adjust and approve before anyone is contacted or proposed.</p></li>
       </ol>
       <div class="why">
         <span class="label">Why an agent</span>
-        <p>A keyword search can't interpret vague requests, weigh must-haves against nice-to-haves, map synonyms and similar technologies, infer seniority from project history, explain its reasoning, or ask a clarifying question.</p>
+        <p>A keyword search can't interpret vague requests, weigh must-haves against nice-to-haves, map synonyms and similar technologies, explain its reasoning with evidence, or ask a clarifying question.</p>
       </div>
     </section>
 
@@ -480,8 +480,8 @@ td.target { color: var(--accent); font-weight: 600; }
           <tbody>
             <tr><td>Java or Python</td><td><span class="tag key">Key</span></td><td>Core language of the role. Either one fully satisfies it.</td><td class="alt">Either language counts in full</td></tr>
             <tr><td>TypeScript / Angular</td><td><span class="tag key">Key</span></td><td>"Fullstack" needs a real frontend track record.</td><td class="alt">TypeScript with React or Vue as partial match</td></tr>
-            <tr><td>5+ years experience</td><td><span class="tag key">Key</span></td><td>Stated as a hard number. See the clarifying question below.</td><td class="alt">None</td></tr>
-            <tr><td>German and English</td><td><span class="tag key">Key</span></td><td>Explicitly marked "required".</td><td class="alt">None</td></tr>
+            <tr><td>5+ years experience</td><td><span class="tag key">Key</span></td><td>Stated as a hard number, counted in the relevant field.</td><td class="alt">None</td></tr>
+            <tr><td>German and English</td><td><span class="tag key">Key</span></td><td>Explicitly "required". Someone missing only a language is still shown, with a note.</td><td class="alt">None</td></tr>
             <tr><td>REST APIs or web services</td><td><span class="tag key">Key</span></td><td>Standard backend expectation for fullstack work.</td><td class="alt">GraphQL, SOAP</td></tr>
             <tr><td>Git workflow and code reviews</td><td><span class="tag base">Baseline</span></td><td>Expected of almost every developer. Rarely on CVs explicitly.</td><td class="alt">GitHub, GitLab, Bitbucket, Azure DevOps</td></tr>
             <tr><td>Apache Spark / Spark SQL</td><td><span class="tag nice">Nice to have</span></td><td>"Or similar" signals flexibility.</td><td class="alt">PySpark, Databricks, Flink, Beam, dbt</td></tr>
@@ -492,9 +492,9 @@ td.target { color: var(--accent); font-weight: 600; }
         </table>
       </div>
       <div class="side-notes">
-        <div class="note"><span class="label">Team shape</span><p>4 profiles: 2 senior, 2 less senior. The agent fills each slot separately.</p></div>
+        <div class="note"><span class="label">Seniority</span><p>"2 more junior, 2 more senior" is recorded, not ranked. The agent ranks by fit and adds a seniority indication where the CV shows one. You choose the mix.</p></div>
         <div class="note"><span class="label">Availability</span><p>"Don't have to be available". The agent skips the availability check and searches all 80.</p></div>
-        <div class="note ask"><span class="label">Clarifying question</span><p><q>"More junior" with 5+ years: should I read this as about 5–8 years vs. 10+ years?</q></p></div>
+        <div class="note ask"><span class="label">Stated assumption</span><p>"German/English" is read as both required. People missing only a language are shown with the note <q>language may be an issue: discuss with the requester</q>.</p></div>
       </div>
     </section>
 
@@ -513,7 +513,7 @@ td.target { color: var(--accent); font-weight: 600; }
             <li><span class="mk">+</span><span>Triage requirements<span class="d">Key, nice to have, baseline, accepted alternatives</span></span></li>
             <li><span class="mk">+</span><span>Availability check <span class="badge-new">Added</span><span class="d">Read-only connection to the planning system, used only when the request needs it</span></span></li>
             <li><span class="mk">+</span><span>Match all CVs with cited evidence<span class="d">Score per person and per requirement</span></span></li>
-            <li><span class="mk">+</span><span>Propose a team and report gaps<span class="d">Ranked shortlist per role or seniority slot</span></span></li>
+            <li><span class="mk">+</span><span>Propose a team and report gaps<span class="d">Ranked shortlist per role, by fit. Seniority is shown as an indication only.</span></span></li>
             <li><span class="mk">+</span><span>Ask clarifying questions<span class="d">When the request is ambiguous or contradictory</span></span></li>
           </ul>
         </div>
@@ -527,7 +527,7 @@ td.target { color: var(--accent); font-weight: 600; }
           </div>
           <div class="scope-col">
             <span class="label">Always with a human</span>
-            <p>The final selection, and anything that goes to a client or to interviews.</p>
+            <p>The final selection, the seniority mix of the team, and anything that goes to a client or to interviews.</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,104 @@
+{
+  "key": "jan-schmidt",
+  "cv_language": "en",
+  "summary": "Angular frontend developer.",
+  "seniority_indication": null,
+  "requirements": [
+    {
+      "id": "R1",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": "Frontend only."
+    },
+    {
+      "id": "R2",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "TypeScript, Angular, React",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R3",
+      "state": "partly met",
+      "evidence": [
+        {
+          "quote": "5 years of frontend development",
+          "inferred": false
+        }
+      ],
+      "note": "Exactly 5 years; request says more than 5."
+    },
+    {
+      "id": "R4",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "German (native)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R5",
+      "state": "partly met",
+      "evidence": [
+        {
+          "quote": "English (good)",
+          "inferred": false
+        }
+      ],
+      "note": "English at \"good\" level."
+    },
+    {
+      "id": "R6",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "REST API integration",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R7",
+      "state": "partly met",
+      "evidence": [
+        {
+          "quote": "Git",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R8",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R9",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R10",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R11",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    }
+  ]
+}

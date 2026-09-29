@@ -1,0 +1,114 @@
+{
+  "key": "jonas-becker",
+  "cv_language": "en",
+  "summary": "Python/Angular fullstack developer; German only at A2.",
+  "seniority_indication": null,
+  "requirements": [
+    {
+      "id": "R1",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Python, Django, FastAPI",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R2",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "TypeScript, Angular",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R3",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "6 years of experience as a developer",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R4",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": "German at basic level (A2) only."
+    },
+    {
+      "id": "R5",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "English (fluent)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R6",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Python backend with REST APIs",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R7",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Git, pull requests, code reviews",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R8",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R9",
+      "state": "partly met",
+      "evidence": [
+        {
+          "quote": "ETL jobs with Airflow",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R10",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Docker, AWS",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R11",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    }
+  ]
+}

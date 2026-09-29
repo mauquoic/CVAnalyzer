@@ -1,0 +1,34 @@
+{
+  "run_id": "fixture-rfp-fullstack",
+  "request_source": "tests/fixtures/run-rfp/request.md",
+  "language": "en",
+  "availability_required": false,
+  "needed_from": null,
+  "min_availability_pct": null,
+  "seniority_mix_requested": "2 more junior, 2 more senior",
+  "assumptions": [
+    "\"German/English required\" read as both languages required.",
+    "\"More than 5 years in this area\" counted as experience in software development, not total career."
+  ],
+  "not_checkable": [],
+  "roles": [
+    {
+      "id": "role-1",
+      "title": "Fullstack developer",
+      "positions": 4,
+      "requirements": [
+        {"id": "R1", "text": "Java or Python", "class": "key", "kind": "skill", "alternatives": ["Java", "Python"], "reason": "Core language of the role; either one satisfies it."},
+        {"id": "R2", "text": "TypeScript / Angular", "class": "key", "kind": "skill", "alternatives": ["TypeScript with React or Vue (partly met)"], "reason": "Fullstack needs a frontend track record."},
+        {"id": "R3", "text": "More than 5 years in software development", "class": "key", "kind": "experience", "alternatives": [], "reason": "Stated as a hard number."},
+        {"id": "R4", "text": "German", "class": "key", "kind": "language", "alternatives": [], "reason": "Explicitly required."},
+        {"id": "R5", "text": "English", "class": "key", "kind": "language", "alternatives": [], "reason": "Explicitly required."},
+        {"id": "R6", "text": "REST APIs or web services", "class": "key", "kind": "skill", "alternatives": ["GraphQL", "SOAP"], "reason": "Standard backend expectation."},
+        {"id": "R7", "text": "Git workflow and code reviews", "class": "baseline", "kind": "skill", "alternatives": ["GitHub", "GitLab", "Bitbucket"], "reason": "Expected of almost every developer."},
+        {"id": "R8", "text": "Apache Spark / Spark SQL or similar", "class": "nice", "kind": "skill", "alternatives": ["PySpark", "Databricks", "Flink", "Beam", "dbt"], "reason": "\"Or similar\" signals flexibility."},
+        {"id": "R9", "text": "Data pipelines, ETL / ELT", "class": "nice", "kind": "skill", "alternatives": ["Airflow", "Azure Data Factory"], "reason": "Adds value; the role is fullstack first."},
+        {"id": "R10", "text": "Containers, Kubernetes or cloud", "class": "nice", "kind": "skill", "alternatives": ["Docker", "OpenShift", "AWS", "Azure", "GCP"], "reason": "Listed with \"or\"."},
+        {"id": "R11", "text": "AI tooling in the SDLC", "class": "nice", "kind": "skill", "alternatives": ["GitHub Copilot", "Claude Code"], "reason": "\"Would be great\"."}
+      ]
+    }
+  ]
+}

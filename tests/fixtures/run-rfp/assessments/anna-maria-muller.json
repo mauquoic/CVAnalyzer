@@ -1,0 +1,132 @@
+{
+  "key": "anna-maria-muller",
+  "cv_language": "en",
+  "summary": "Fullstack Java/Angular developer with Spark and data pipeline projects.",
+  "seniority_indication": {
+    "text": "Senior (indication)",
+    "quote": "lead developer for a team of 5"
+  },
+  "requirements": [
+    {
+      "id": "R1",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Java, Spring Boot, Python",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R2",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "TypeScript, Angular 15",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R3",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "12 years of experience in software development",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R4",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "German (native)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R5",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "English (fluent, C1)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R6",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "REST APIs, OpenAPI",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R7",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "GitLab, merge requests, code reviews",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R8",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Apache Spark, PySpark, Databricks",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R9",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "built data pipelines (ETL) with PySpark",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R10",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Docker, Kubernetes, Azure",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R11",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "GitHub Copilot for test generation",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    }
+  ]
+}

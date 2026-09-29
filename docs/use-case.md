@@ -17,7 +17,7 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 | Frequency | About 8 requests per month, about 2 of them complex (several people, full CV review) |
 | Request forms | Email text, RFP excerpt, skill list; English or German |
 | Where it runs | In Claude Code, in this repository |
-| Inputs on disk | Anonymised CVs in `data/cvs/`, team list with availability in `data/team/`, requests in `data/requests/` (or pasted in) |
+| Inputs on disk | CVs as PowerPoint files in `data/cvs/`; the Excel team list with names and availability in `data/team/`; requests in `data/requests/` (or pasted in). All gitignored. |
 | Output | A Markdown report in `reports/` |
 
 ## 3. What gets automated
@@ -46,7 +46,7 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 - **Recommend only.** The agent never contacts people, sends emails or invites, or writes to CV, HR or planning systems.
 - **Evidence or no credit.** A skill counts only if the CV shows it. Inferred items (e.g. years calculated from project dates) are marked as inferred.
 - **No protected attributes.** Name (beyond identification), age, gender, nationality, photo, family status and similar are not used for matching and not shown in the reasoning.
-- **Personal data stays inside approved tooling.** CVs and availability are personal data (GDPR). Only the resource manager sees the output.
+- **Personal data stays local.** CVs, the team list and reports are personal data (GDPR). They are gitignored and stay on the machine that runs the agent. Only the resource manager sees the output.
 - **Transparent.** Every ranking can be explained by its per-requirement assessments. No unexplained score.
 - **Complete coverage.** Every person on the team list is assessed. Anyone who couldn't be assessed is listed with the reason.
 - **Seniority is the resource manager's call.** The agent doesn't rank or fill slots by seniority. Where the CV clearly shows it (e.g. lead roles, years), it may add a seniority *indication* as a note, labelled as a recommendation.
@@ -87,8 +87,13 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 | Situation | Expected behavior |
 |---|---|
 | Person on the team list has no CV | Listed as "not assessed: no CV". Not silently skipped. |
+| Name in the CV file differs from the team list (middle name, umlaut spelling, word order, "CV" prefix) | Linked automatically. |
+| Name only similar (e.g. Jan vs. Jana) | Linked if it is the only candidate, and flagged in the report for the resource manager to confirm. |
+| File name has no recognisable name | The name on the first slide is used. |
+| One CV file matches several people equally | Not linked. Reported, and fixed by the resource manager in `data/team/cv_links.json`. |
+| CV file matches nobody on the team list | Ignored and reported. |
 | CV older than a threshold (default: 12 months) | Still assessed, but flagged as outdated. |
-| Several CV versions for one person | Uses the newest, and says which. |
+| Several CV versions for one person | Uses the newest (date in the file name, otherwise the last-saved date), and says which. |
 | Skill listed without any project or duration | Counts as partly met, with lower confidence than skills backed by projects. |
 | Unreadable file (scanned image, corrupt, unsupported) | Listed as "not assessed: unreadable". |
 | CV in German | Assessed like an English CV. |
@@ -128,12 +133,13 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 
 | Topic | Decision |
 |---|---|
-| CVs | Anonymised CVs, provided by the resource manager in `data/cvs/` |
+| CVs | PowerPoint files, one per person, provided by the resource manager in `data/cvs/`. Linked to the team list by name. |
 | Team list and availability | One list of the ~80 people including availability, in `data/team/` |
 | Runtime | Claude Code, in this repository. No separate UI. |
 | Seniority | Not used for ranking. At most a labelled indication, judged by the resource manager. |
 | Output | Markdown report in `reports/` |
-| Test data | The anonymised CVs in `data/cvs/` |
+| Test data | Synthetic, fictional CVs and team list in `tests/fixtures/`. Real data is never committed. |
+| Guardrails | `docs/guardrails.md` |
 | Languages | "German/English" means both required. A person missing only the language is still shown, with a note. |
 | Outdated CV | Older than 12 months |
 | Missing headcount | 1 person |
@@ -142,5 +148,5 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 
 | # | Question | Needed for |
 |---|---|---|
-| 1 | Which CV file formats will be in `data/cvs/` (Word, PDF, text)? | Reading the CVs |
-| 2 | The team list's columns, and how a person is linked to their CV file | Complete coverage and availability |
+| 1 | Does a PowerPoint file ever hold several people's CVs (e.g. one deck with a slide per person)? The tools currently assume one person per file. | Linking CVs |
+| 2 | Are the CVs in English, German or both? Both are supported. This only affects the evidence quotes. | Report wording |

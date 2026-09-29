@@ -1,3 +1,19 @@
-# Generated match reports contain assessments of people; keep them local.
+# Personal data stays on the machine that runs the agent (docs/guardrails.md §9).
+data/cvs/*
+!data/cvs/README.md
+data/team/*
+!data/team/README.md
+data/requests/*
+!data/requests/README.md
+!data/requests/example-rfp-fullstack.md
 reports/*
 !reports/README.md
+
+# Extracted CV text and intermediate results, rebuilt on every run.
+.work/
+
+# Python
+.venv/
+__pycache__/
+tests/cases/*
+!tests/cases/README.md

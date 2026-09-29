@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 tools/*)",
+      "Bash(python3 -m unittest*)",
+      "Edit(./.work/**)",
+      "Edit(./reports/**)"
+    ],
+    "deny": [
+      "Edit(./data/**)",
+      "WebSearch",
+      "WebFetch"
+    ]
+  }
+}

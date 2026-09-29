@@ -1,0 +1,3 @@
+# Runtime: the tools use the Python standard library for .pptx, .docx and .xlsx.
+# Optional, only needed for PDF CVs:
+pypdf>=4

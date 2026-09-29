@@ -1,0 +1,3 @@
+# Only for regenerating the synthetic test fixtures (tests/fixtures/make_fixtures.py).
+python-pptx>=1.0
+openpyxl>=3.1

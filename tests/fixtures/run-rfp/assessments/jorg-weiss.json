@@ -1,0 +1,114 @@
+{
+  "key": "jorg-weiss",
+  "cv_language": "en",
+  "summary": "Data engineer with Spark; no frontend evidence.",
+  "seniority_indication": null,
+  "requirements": [
+    {
+      "id": "R1",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Python, Apache Spark, Spark SQL",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R2",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "TypeScript, Angular 16 applications",
+          "inferred": false
+        }
+      ],
+      "note": "Invented quote: the tests expect verify_evidence.py to catch it."
+    },
+    {
+      "id": "R3",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "8 years in data engineering",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R4",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "German (native)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R5",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "English (fluent)",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R6",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R7",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    },
+    {
+      "id": "R8",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Python, Apache Spark, Spark SQL",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R9",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "data pipeline development with Spark SQL and Airflow",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R10",
+      "state": "met",
+      "evidence": [
+        {
+          "quote": "Kubernetes, GCP",
+          "inferred": false
+        }
+      ],
+      "note": ""
+    },
+    {
+      "id": "R11",
+      "state": "not evidenced",
+      "evidence": [],
+      "note": ""
+    }
+  ]
+}

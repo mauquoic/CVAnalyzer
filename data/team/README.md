@@ -1,15 +1,24 @@
 # Team list
 
-Put the list of the ~80 people in the group here, including availability (Excel or CSV).
+Put the Excel list (`.xlsx`) of the ~80 people in the group here, with their availability. `.csv` also works. The contents of this folder are gitignored.
 
-The agent needs these fields per person. Column names can be yours, and the build plan will map them:
+**Columns** are recognised by their header, in English or German. A title row above the headers is fine.
 
-| Field | Purpose |
-|---|---|
-| ID or pseudonym | Links the person to their CV in `data/cvs/` |
-| Availability | Current availability, e.g. percentage or free/booked |
-| Available from | Date the person becomes available, if booked |
+| Field | Recognised headers | Required |
+|---|---|---|
+| Name | Name, Full name, Mitarbeiter, or First name + Last name (Vorname + Nachname) | Yes |
+| Availability | Availability, Verfügbarkeit, Free capacity. Values like `50%`, `0.5`, `free`, `booked`, `ja`, `nein`. | For availability checks |
+| Available from | Available from, Verfügbar ab | Optional |
+| Level | Level, Career level, Grade, Stufe. Shown for context, never used for ranking. | Optional |
 
-Optional: role or career level, so you can judge seniority yourself in the report.
+If your headers are different, add `columns.json` to map them, e.g.:
 
-Anything in this folder is committed to the repository, so use pseudonymised data.
+```json
+{"name": "Mitarbeitende", "availability": "Freie Kapazität Q4", "available_from": "Frei ab"}
+```
+
+**Manual CV links.** If a CV can't be linked automatically, or a probable match is wrong, add `cv_links.json`:
+
+```json
+{"CV_A_Mueller_final.pptx": "Anna Maria Müller"}
+```
