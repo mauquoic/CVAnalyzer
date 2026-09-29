@@ -1,0 +1,697 @@
+<title>CV Match Agent</title>
+<meta name="description" content="Agentic use case brief: matching staffing requests against the team's CVs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a presenter deck. Section rail on the left (desktop), one slide at a time on the stage, controls docked at the bottom. */
+:root {
+  --paper: #F4F6F9;
+  --surface: #FFFFFF;
+  --ink: #141C2B;
+  --muted: #5A6578;
+  --line: #DAE0E8;
+  --accent: #2446C4;
+  --accent-soft: #E7ECFB;
+  --key: #2446C4;
+  --nice: #0E7565;
+  --nice-soft: #E1F2EE;
+  --ask: #9A6512;
+  --ask-soft: #FBF0DD;
+  --out: #A33A3A;
+  --out-soft: #F8E6E6;
+  --mail: #23272E;
+  --mail-ink: #E9EBEE;
+  --mail-muted: #9AA1AC;
+
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --t-xs: 0.75rem;
+  --t-sm: 0.875rem;
+  --t-md: 1rem;
+  --t-lg: 1.1875rem;
+  --t-xl: clamp(1.5rem, 1.1rem + 1.4vw, 2rem);
+  --t-2xl: clamp(2rem, 1.3rem + 2.6vw, 3.1rem);
+  --t-hero: clamp(2.6rem, 1.4rem + 5vw, 5rem);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0E131B; --surface: #151C27; --ink: #E5E9F0; --muted: #98A3B5; --line: #283244;
+    --accent: #8AA2FF; --accent-soft: #1C2644; --key: #8AA2FF;
+    --nice: #4FC8B2; --nice-soft: #12302B; --ask: #E6B25A; --ask-soft: #33260F;
+    --out: #EE8A8A; --out-soft: #3A1C1E;
+    --mail: #1B2029; --mail-ink: #E4E7EC; --mail-muted: #8D95A2;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0E131B; --surface: #151C27; --ink: #E5E9F0; --muted: #98A3B5; --line: #283244;
+  --accent: #8AA2FF; --accent-soft: #1C2644; --key: #8AA2FF;
+  --nice: #4FC8B2; --nice-soft: #12302B; --ask: #E6B25A; --ask-soft: #33260F;
+  --out: #EE8A8A; --out-soft: #3A1C1E;
+  --mail: #1B2029; --mail-ink: #E4E7EC; --mail-muted: #8D95A2;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: var(--t-md);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--f-display); font-weight: 700; margin: 0; text-wrap: balance; letter-spacing: -0.015em; line-height: 1.1; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; }
+
+.deck {
+  display: grid;
+  grid-template-columns: 250px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  min-height: 480px;
+}
+
+/* ---------- Rail ---------- */
+.rail {
+  grid-row: 1 / 3;
+  border-right: 1px solid var(--line);
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  overflow-y: auto;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 700; font-size: var(--t-md); }
+.brand-mark { width: 28px; height: 28px; flex: none; }
+.rail ol { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.rail a {
+  display: grid; grid-template-columns: 26px 1fr; align-items: baseline;
+  padding: 7px 10px; border-radius: 6px;
+  color: var(--muted); text-decoration: none; font-size: var(--t-sm);
+}
+.rail a .n { font-family: var(--f-mono); font-size: var(--t-xs); font-variant-numeric: tabular-nums; }
+.rail a:hover { color: var(--ink); background: var(--accent-soft); }
+.rail a[aria-current="step"] { color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.rail-foot { margin-top: auto; font-size: var(--t-xs); color: var(--muted); line-height: 1.5; }
+.rail-foot kbd { font-family: var(--f-mono); border: 1px solid var(--line); border-radius: 4px; padding: 0 5px; background: var(--surface); }
+
+/* ---------- Stage ---------- */
+.stage { overflow-y: auto; padding-block: clamp(28px, 5vh, 64px); padding-inline: clamp(16px, 5vw, 72px); }
+.slide { max-width: 1060px; margin-inline: auto; display: flex; flex-direction: column; gap: 28px; }
+.slide[hidden] { display: none; }
+.slide:not([hidden]) { animation: enter .35s ease-out both; }
+@keyframes enter { from { opacity: .001; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .slide:not([hidden]) { animation: none; } }
+
+.eyebrow { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+.slide-head { display: flex; flex-direction: column; gap: 10px; }
+.slide-head h2 { font-size: var(--t-2xl); }
+.lede { font-size: var(--t-lg); color: var(--muted); max-width: 62ch; }
+
+.cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; align-items: start; }
+.cols.wide-left { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); }
+.stack { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+h3 { font-size: var(--t-lg); }
+.label { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+.list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.list li { display: grid; grid-template-columns: 14px 1fr; gap: 10px; align-items: baseline; }
+.list li::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); transform: translateY(-2px); }
+.list li strong { font-weight: 600; }
+
+.fill {
+  font-family: var(--f-mono); font-size: 0.86em; white-space: nowrap;
+  padding: 1px 6px; border-radius: 4px;
+  border: 1px dashed var(--ask); color: var(--ask); background: var(--ask-soft);
+}
+
+/* ---------- Title slide ---------- */
+.title-slide { gap: 40px; padding-top: 4vh; }
+.title-slide h1 { font-size: var(--t-hero); letter-spacing: -0.03em; line-height: 1; }
+.title-slide .lede { font-size: clamp(1.1rem, 1rem + 0.5vw, 1.4rem); color: var(--ink); max-width: 34ch; }
+.flow {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch; gap: 12px;
+}
+.flow-node { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.flow-node.agent { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.flow-node b { font-family: var(--f-display); font-size: var(--t-lg); }
+.flow-node span { color: var(--muted); font-size: var(--t-sm); }
+.flow-arrow { align-self: center; color: var(--muted); font-family: var(--f-mono); }
+.meta { display: flex; flex-wrap: wrap; gap: 10px 32px; border-top: 1px solid var(--line); padding-top: 18px; }
+.meta div { display: flex; flex-direction: column; gap: 2px; }
+.meta dd { margin: 0; font-weight: 600; }
+.meta dt { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+
+/* ---------- Process today ---------- */
+.path { display: flex; flex-direction: column; gap: 0; border-left: 2px solid var(--line); margin-left: 6px; }
+.path li { list-style: none; position: relative; padding: 0 0 18px 22px; }
+.path li::before { content: ""; position: absolute; left: -7px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--surface); border: 2px solid var(--muted); }
+.path li.pain::before { border-color: var(--out); background: var(--out-soft); }
+.path li:last-child { padding-bottom: 0; }
+.path b { display: block; }
+.path span { color: var(--muted); font-size: var(--t-sm); }
+.split-box { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.split-box > div { background: var(--surface); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; }
+.split-box .big { font-family: var(--f-display); font-size: var(--t-xl); font-weight: 700; }
+
+/* ---------- Email ---------- */
+.mail {
+  background: var(--mail); color: var(--mail-ink); border-radius: 12px; overflow: hidden;
+  font-size: 0.93rem; line-height: 1.55; min-width: 0;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 12px 32px -18px rgba(10,20,40,.45);
+}
+.mail-bar { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,.08); font-family: var(--f-mono); font-size: var(--t-xs); color: var(--mail-muted); }
+.mail-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+.mail-body ul { padding-left: 1.2em; display: flex; flex-direction: column; gap: 2px; }
+.mail-body mark { background: transparent; color: inherit; border-bottom: 2px solid var(--ask); padding-bottom: 1px; }
+.mail-body .muted { color: var(--mail-muted); }
+.hard { list-style: none; display: flex; flex-direction: column; gap: 12px; counter-reset: h; }
+.hard li { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: baseline; counter-increment: h; }
+.hard li::before { content: counter(h); font-family: var(--f-mono); font-size: var(--t-xs); color: var(--ask); border: 1px solid var(--ask); border-radius: 50%; width: 22px; height: 22px; display: grid; place-items: center; }
+.calc { font-family: var(--f-mono); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; font-variant-numeric: tabular-nums; }
+.calc strong { font-family: var(--f-display); font-size: var(--t-xl); color: var(--out); }
+.calc span { color: var(--muted); font-size: var(--t-sm); }
+
+/* ---------- Value ---------- */
+.grid-4 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.grid-4 > div { padding: 22px 24px 22px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.grid-4 > div:nth-child(odd) { border-right: 1px solid var(--line); }
+.grid-4 > div:nth-child(even) { padding-left: 24px; }
+.grid-4 h3 { display: flex; gap: 10px; align-items: baseline; }
+.grid-4 h3 small { font-family: var(--f-mono); font-size: var(--t-xs); color: var(--accent); font-weight: 400; }
+.grid-4 p { color: var(--muted); }
+.who { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { font-size: var(--t-sm); padding: 5px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); }
+
+/* ---------- Steps ---------- */
+.steps { list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.steps li { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.steps li.new { border-color: var(--nice); box-shadow: 0 0 0 3px var(--nice-soft); }
+.steps .num { font-family: var(--f-mono); font-size: var(--t-xs); color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.steps .num em { font-style: normal; color: var(--nice); text-transform: uppercase; letter-spacing: .08em; }
+.steps h3 { font-size: var(--t-md); font-family: var(--f-body); font-weight: 600; letter-spacing: 0; }
+.steps p { color: var(--muted); font-size: var(--t-sm); }
+.why { background: var(--accent-soft); border-radius: 10px; padding: 18px 22px; display: grid; grid-template-columns: auto 1fr; gap: 6px 20px; align-items: baseline; }
+.why p { color: var(--ink); }
+
+/* ---------- Triage table ---------- */
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: var(--t-sm); color: var(--muted); }
+.tag { display: inline-block; font-family: var(--f-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: .07em; padding: 3px 8px; border-radius: 4px; white-space: nowrap; font-weight: 500; }
+.tag.key { color: var(--key); background: var(--accent-soft); }
+.tag.nice { color: var(--nice); background: var(--nice-soft); }
+.tag.base { color: var(--muted); background: transparent; border: 1px solid var(--line); }
+.tag.ask { color: var(--ask); background: var(--ask-soft); }
+.tag.in { color: var(--nice); background: var(--nice-soft); }
+.tag.out { color: var(--out); background: var(--out-soft); }
+.table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: var(--t-sm); }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 400; background: var(--paper); }
+tr:last-child td { border-bottom: 0; }
+td:first-child { font-weight: 600; }
+td.alt { color: var(--muted); }
+.side-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.note { border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; font-size: var(--t-sm); background: var(--surface); min-width: 0; }
+.note.ask { border-color: var(--ask); background: var(--ask-soft); }
+.note q { font-style: italic; }
+
+/* ---------- Scope ---------- */
+.scope { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.scope-col { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; }
+.scope-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.scope-col li { display: grid; grid-template-columns: 22px 1fr; gap: 8px; }
+.scope-col li .mk { font-family: var(--f-mono); font-weight: 500; }
+.scope-in .mk { color: var(--nice); }
+.scope-out .mk { color: var(--out); }
+.scope-col li span.d { display: block; color: var(--muted); font-size: var(--t-sm); }
+.badge-new { font-family: var(--f-mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: .08em; color: var(--nice); margin-left: 6px; }
+
+/* ---------- Hypothesis ---------- */
+.hypo { font-family: var(--f-display); font-weight: 500; font-size: clamp(1.4rem, 1rem + 1.6vw, 2.2rem); line-height: 1.3; letter-spacing: -0.01em; max-width: 30ch; }
+.hypo em { font-style: normal; color: var(--accent); }
+.hypo-parts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line); }
+.hypo-parts div { padding: 16px 18px 0 0; display: flex; flex-direction: column; gap: 4px; font-size: var(--t-sm); min-width: 0; }
+.hypo-parts div + div { padding-left: 18px; border-left: 1px solid var(--line); }
+
+/* ---------- KPI ---------- */
+td.num, th.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.target { color: var(--accent); font-weight: 600; }
+.kpi-type { font-family: var(--f-mono); font-size: var(--t-xs); color: var(--muted); font-weight: 400; display: block; margin-top: 2px; }
+
+/* ---------- Risks ---------- */
+.risks { list-style: none; display: flex; flex-direction: column; border-top: 1px solid var(--line); }
+.risks li { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr) auto; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+.risks h3 { font-size: var(--t-md); }
+.risks p { color: var(--muted); font-size: var(--t-sm); }
+.risks p b { color: var(--ink); font-weight: 600; }
+.sev { font-family: var(--f-mono); font-size: var(--t-xs); text-transform: uppercase; letter-spacing: .08em; white-space: nowrap; }
+.sev.hi { color: var(--out); }
+.sev.md { color: var(--ask); }
+
+/* ---------- Scale / next ---------- */
+.reuse { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.reuse li { border-left: 2px solid var(--accent); padding: 2px 0 2px 14px; display: flex; flex-direction: column; gap: 2px; }
+.reuse li span { color: var(--muted); font-size: var(--t-sm); }
+.next { list-style: none; counter-reset: nx; display: flex; flex-direction: column; gap: 14px; }
+.next li { counter-increment: nx; display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: baseline; }
+.next li::before { content: counter(nx, decimal-leading-zero); font-family: var(--f-mono); font-size: var(--t-sm); color: var(--accent); }
+.next li span { display: block; color: var(--muted); font-size: var(--t-sm); }
+
+/* ---------- Controls ---------- */
+.controls {
+  grid-column: 2;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 16px;
+  padding: 12px clamp(16px, 5vw, 72px);
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.btn {
+  font: 500 var(--t-sm) var(--f-body);
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+}
+.btn:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.btn.primary:hover:not(:disabled) { color: var(--surface); filter: brightness(1.08); }
+.btn:disabled { opacity: .4; cursor: default; }
+.btn:focus-visible, .rail a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.where { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.where-text { display: flex; gap: 10px; align-items: baseline; font-size: var(--t-sm); min-width: 0; }
+.where-text .count { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--muted); flex: none; }
+.where-text .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar { height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s ease; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1000px) {
+  .deck { grid-template-columns: minmax(0, 1fr); }
+  .rail { display: none; }
+  .controls { grid-column: 1; }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hypo-parts { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 16px; }
+  .hypo-parts div:nth-child(3) { padding-left: 0; border-left: 0; }
+}
+@media (max-width: 760px) {
+  .cols, .cols.wide-left, .scope, .side-notes, .reuse, .grid-4 { grid-template-columns: minmax(0, 1fr); }
+  .grid-4 > div, .grid-4 > div:nth-child(even) { padding: 18px 0; border-right: 0; }
+  .flow { grid-template-columns: minmax(0, 1fr); }
+  .flow-arrow { transform: rotate(90deg); justify-self: center; }
+  .steps { grid-template-columns: minmax(0, 1fr); }
+  .risks li { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .why { grid-template-columns: minmax(0, 1fr); }
+  .btn .txt { display: none; }
+}
+@media (max-width: 460px) {
+  .hypo-parts { grid-template-columns: minmax(0, 1fr); }
+  .hypo-parts div, .hypo-parts div + div { padding-left: 0; border-left: 0; }
+  .split-box { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+
+<div class="deck">
+  <aside class="rail" aria-label="Sections">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 28 28" aria-hidden="true">
+        <rect x="1" y="1" width="26" height="26" rx="7" fill="var(--accent)"/>
+        <rect x="7" y="8" width="9" height="2.2" rx="1.1" fill="var(--surface)"/>
+        <rect x="7" y="13" width="14" height="2.2" rx="1.1" fill="var(--surface)"/>
+        <rect x="7" y="18" width="6" height="2.2" rx="1.1" fill="var(--surface)"/>
+        <circle cx="20" cy="9.1" r="2.4" fill="var(--surface)"/>
+      </svg>
+      CV Match Agent
+    </div>
+    <ol id="toc"></ol>
+    <p class="rail-foot">Navigate with <kbd>←</kbd> <kbd>→</kbd> or the buttons below.</p>
+  </aside>
+
+  <main class="stage" id="stage">
+
+    <!-- 1 -->
+    <section class="slide title-slide" data-title="Overview">
+      <div class="slide-head">
+        <p class="eyebrow">Agentic use case brief · Agentic enablement lab</p>
+        <h1>CV Match Agent</h1>
+      </div>
+      <p class="lede">From a staffing request to a shortlist from our team's 80 CVs, with evidence for every match, in minutes instead of hours.</p>
+      <div class="flow" aria-label="How it works at a glance">
+        <div class="flow-node"><span>Input</span><b>Staffing request</b><span>Email, RFP or skill list</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node agent"><span>Agent</span><b>Triage and match</b><span>Key vs. nice-to-have, availability, CV evidence</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-node"><span>Output</span><b>Ranked shortlist</b><span>Per role, with gaps. You decide.</span></div>
+      </div>
+      <dl class="meta">
+        <div><dt>Owner</dt><dd>Resource manager</dd></div>
+        <div><dt>Team in scope</dt><dd>~80 people, 80 CVs</dd></div>
+        <div><dt>Users</dt><dd>Resource manager (MVP)</dd></div>
+        <div><dt>Stage</dt><dd>Framing · MVP definition</dd></div>
+      </dl>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-title="The problem today" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Business problem · Current process</p>
+        <h2>Every request means reading the same CVs again</h2>
+        <p class="lede">Project leads and bid teams ask for people by skill, experience and language. Matching them against the team is done by hand.</p>
+      </div>
+      <div class="cols wide-left">
+        <div class="stack">
+          <p class="label">How a request is handled now</p>
+          <ol class="path">
+            <li><b>Request arrives</b><span>Free text by email, often with "or" options and vague wording.</span></li>
+            <li><b>Check who is available</b><span>For simple, single-person requests: filter by availability first.</span></li>
+            <li class="pain"><b>Read CVs against every requirement</b><span>For complex requests (5–10 people, availability optional): all 80 CVs.</span></li>
+            <li class="pain"><b>Weigh trade-offs from memory</b><span>Who is strong where, who covers what, who is senior enough.</span></li>
+            <li><b>Send a shortlist to interviews</b><span>Or add profiles to an RFP answer.</span></li>
+          </ol>
+        </div>
+        <div class="stack">
+          <p class="label">Friction</p>
+          <ul class="list">
+            <li><span><strong>Slow and repetitive.</strong> The same CVs are re-read for every request.</span></li>
+            <li><span><strong>Wording mismatches.</strong> A request says "K8s", a CV says "container orchestration".</span></li>
+            <li><span><strong>Depends on memory.</strong> Good fits are missed, especially less visible people.</span></li>
+            <li><span><strong>Hard to show your reasoning</strong> to the requester.</span></li>
+          </ul>
+          <div class="split-box">
+            <div><span class="label">Requests per month</span><span class="big"><span class="fill">[X]</span></span><span>of which <span class="fill">[Y]</span> complex</span></div>
+            <div><span class="label">Time per complex request</span><span class="big"><span class="fill">[Z h]</span></span><span>to produce a shortlist</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" data-title="A real request" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Business problem · Example</p>
+        <h2>A real request: four fullstack profiles for an RFP</h2>
+      </div>
+      <div class="cols wide-left">
+        <article class="mail" aria-label="Incoming staffing request">
+          <div class="mail-bar"><span>Incoming request · RFP bid team</span><span>Anonymised</span></div>
+          <div class="mail-body">
+            <p>…we would need <mark>four developer profiles</mark>, that we can add to the RFP answer as part of the exemplary team. <mark>They don't have to be available</mark>; we would like to present the best in class we have. Can you please provide us with some Fulldstack developer sample profiles?</p>
+            <p><mark>Experience more than 5 years</mark> in this area, <mark>mix of seniority (2 more junior, 2 more senior)</mark> would be great. <mark>German/English required.</mark> Tech Skills see below.</p>
+            <div>
+              <p>TechSkills</p>
+              <ul>
+                <li>Java or Python</li>
+                <li>Frontend Typescript/Angular</li>
+                <li>Apache Spark, Spark SQL or similar</li>
+                <li>Data-Pipeline-Development</li>
+                <li>ETL-/ELT-Processes</li>
+                <li>REST-APIs or Webservices</li>
+                <li>Git-based Development, incl. Branching, Merge Requests or Pull Requests and Code Reviews</li>
+                <li>Containers, Kubernetes or Cloud-/Private-Cloud-environments</li>
+                <li>AI Skills would be great, focus on tooling throughout SDLC</li>
+              </ul>
+            </div>
+            <p class="muted">Would be great you could help us out once more. Let me know in case of any question.</p>
+          </div>
+        </article>
+        <div class="stack">
+          <p class="label">What makes it hard</p>
+          <ol class="hard">
+            <li><span><strong>Four people, not one,</strong> and they have to work as a team.</span></li>
+            <li><span><strong>Nine skill lines with "or" and "similar".</strong> Many valid combinations, no clear priority.</span></li>
+            <li><span><strong>A built-in tension.</strong> "More than 5 years" and "2 more junior" need interpreting.</span></li>
+            <li><span><strong>Availability doesn't filter anyone out,</strong> so the whole group has to be reviewed.</span></li>
+          </ol>
+          <div class="calc" aria-label="Manual effort">
+            <span>80 CVs × 9 skill lines</span><span>=</span><strong>720</strong><span>judgments, by hand, for one request</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" data-title="Business value" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Business value</p>
+        <h2>Faster, better and fairer staffing decisions</h2>
+      </div>
+      <div class="grid-4">
+        <div><h3><small>Speed</small>Faster response</h3><p>Shortlists in minutes instead of hours. Projects get staffed and RFP answers go out sooner.</p></div>
+        <div><h3><small>Quality</small>Better matches</h3><p>Every CV is checked against every requirement, every time, with the evidence shown.</p></div>
+        <div><h3><small>Fairness</small>Visibility for everyone</h3><p>People are matched on what their CV shows, not on who comes to mind first.</p></div>
+        <div><h3><small>Focus</small>Time for judgment work</h3><p>The resource manager spends time on conversations and development, not document scanning.</p></div>
+      </div>
+      <div class="stack">
+        <p class="label">Who benefits</p>
+        <div class="who">
+          <span class="chip">Resource manager</span>
+          <span class="chip">Project leads and bid teams</span>
+          <span class="chip">Team members (visibility, fair chances)</span>
+          <span class="chip">Clients (stronger proposed teams)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-title="What the agent does" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Agent design</p>
+        <h2>What the agent does</h2>
+        <p class="lede">It recommends and you decide. Each step is visible and can be corrected.</p>
+      </div>
+      <ol class="steps">
+        <li><span class="num">Step 1</span><h3>Read the request</h3><p>Takes the request as it arrives: email text, RFP excerpt or a skill list.</p></li>
+        <li class="new"><span class="num">Step 2 <em>Key step</em></span><h3>Triage the requirements</h3><p>Decides what is probably key, what is a nice-to-have, and where alternatives are acceptable. Asks when something is unclear.</p></li>
+        <li><span class="num">Step 3</span><h3>Check availability</h3><p>Reads availability from the planning system when the request needs it. Skips this step when it doesn't, as in the RFP example.</p></li>
+        <li><span class="num">Step 4</span><h3>Score every CV with evidence</h3><p>Scores each person per requirement and quotes the CV text behind it. No evidence, no credit.</p></li>
+        <li><span class="num">Step 5</span><h3>Build the team</h3><p>Ranked shortlist per role, a proposed team combination, and gaps such as "nobody has Spark and 10+ years".</p></li>
+        <li><span class="num">Step 6</span><h3>Hand over to you</h3><p>You review, adjust and approve before anyone is contacted or proposed.</p></li>
+      </ol>
+      <div class="why">
+        <span class="label">Why an agent</span>
+        <p>A keyword search can't interpret vague requests, weigh must-haves against nice-to-haves, map synonyms and similar technologies, infer seniority from project history, explain its reasoning, or ask a clarifying question.</p>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" data-title="Requirement triage" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Agent design · Applied to the example</p>
+        <h2>Step 2 in practice: what is key, what is nice to have</h2>
+        <p class="lede">The agent proposes a weighting for the RFP request. You can override any line before matching starts.</p>
+      </div>
+      <div class="legend" aria-label="Legend">
+        <span><span class="tag key">Key</span> must be evidenced</span>
+        <span><span class="tag nice">Nice to have</span> raises the score, alternatives accepted</span>
+        <span><span class="tag base">Baseline</span> expected, tie-breaker only</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Requirement</th><th>Weight</th><th>Agent's reasoning</th><th>Accepted alternatives</th></tr></thead>
+          <tbody>
+            <tr><td>Java or Python</td><td><span class="tag key">Key</span></td><td>Core language of the role. Either one fully satisfies it.</td><td class="alt">Either language counts in full</td></tr>
+            <tr><td>TypeScript / Angular</td><td><span class="tag key">Key</span></td><td>"Fullstack" needs a real frontend track record.</td><td class="alt">TypeScript with React or Vue as partial match</td></tr>
+            <tr><td>5+ years experience</td><td><span class="tag key">Key</span></td><td>Stated as a hard number. See the clarifying question below.</td><td class="alt">None</td></tr>
+            <tr><td>German and English</td><td><span class="tag key">Key</span></td><td>Explicitly marked "required".</td><td class="alt">None</td></tr>
+            <tr><td>REST APIs or web services</td><td><span class="tag key">Key</span></td><td>Standard backend expectation for fullstack work.</td><td class="alt">GraphQL, SOAP</td></tr>
+            <tr><td>Git workflow and code reviews</td><td><span class="tag base">Baseline</span></td><td>Expected of almost every developer. Rarely on CVs explicitly.</td><td class="alt">GitHub, GitLab, Bitbucket, Azure DevOps</td></tr>
+            <tr><td>Apache Spark / Spark SQL</td><td><span class="tag nice">Nice to have</span></td><td>"Or similar" signals flexibility.</td><td class="alt">PySpark, Databricks, Flink, Beam, dbt</td></tr>
+            <tr><td>Data pipelines, ETL / ELT</td><td><span class="tag nice">Nice to have</span></td><td>Data profile adds value, but the role is fullstack first.</td><td class="alt">Airflow, Azure Data Factory, Informatica, SSIS</td></tr>
+            <tr><td>Containers, Kubernetes, cloud</td><td><span class="tag nice">Nice to have</span></td><td>Listed with "or". Any of the three counts.</td><td class="alt">Docker, OpenShift, AWS, Azure, GCP</td></tr>
+            <tr><td>AI skills in the SDLC</td><td><span class="tag nice">Nice to have</span></td><td>"Would be great" signals a bonus.</td><td class="alt">GitHub Copilot, Claude Code, AI-assisted testing</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="side-notes">
+        <div class="note"><span class="label">Team shape</span><p>4 profiles: 2 senior, 2 less senior. The agent fills each slot separately.</p></div>
+        <div class="note"><span class="label">Availability</span><p>"Don't have to be available". The agent skips the availability check and searches all 80.</p></div>
+        <div class="note ask"><span class="label">Clarifying question</span><p><q>"More junior" with 5+ years: should I read this as about 5–8 years vs. 10+ years?</q></p></div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" data-title="Scope" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">MVP scope</p>
+        <h2>What's in and what stays out</h2>
+        <p class="lede">The agent reads and recommends. It never acts on people or records.</p>
+      </div>
+      <div class="scope">
+        <div class="scope-col scope-in">
+          <span class="tag in">In scope</span>
+          <ul>
+            <li><span class="mk">+</span><span>Read requests in any format<span class="d">Email, RFP text, skill lists</span></span></li>
+            <li><span class="mk">+</span><span>Triage requirements<span class="d">Key, nice to have, baseline, accepted alternatives</span></span></li>
+            <li><span class="mk">+</span><span>Availability check <span class="badge-new">Added</span><span class="d">Read-only connection to the planning system, used only when the request needs it</span></span></li>
+            <li><span class="mk">+</span><span>Match all CVs with cited evidence<span class="d">Score per person and per requirement</span></span></li>
+            <li><span class="mk">+</span><span>Propose a team and report gaps<span class="d">Ranked shortlist per role or seniority slot</span></span></li>
+            <li><span class="mk">+</span><span>Ask clarifying questions<span class="d">When the request is ambiguous or contradictory</span></span></li>
+          </ul>
+        </div>
+        <div class="stack">
+          <div class="scope-col scope-out">
+            <span class="tag out">Out of scope</span>
+            <ul>
+              <li><span class="mk">−</span><span>Contacting people<span class="d">No emails, invites or messages to candidates or requesters</span></span></li>
+              <li><span class="mk">−</span><span>Changing HR records<span class="d">No writes to CVs, HR or planning systems</span></span></li>
+            </ul>
+          </div>
+          <div class="scope-col">
+            <span class="label">Always with a human</span>
+            <p>The final selection, and anything that goes to a client or to interviews.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" data-title="Value hypothesis" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Value hypothesis</p>
+      </div>
+      <p class="hypo">We believe the CV Match Agent will cut the time to shortlist a complex request from <span class="fill">[Z h]</span> to <em>under 15 minutes</em>, with shortlists at least as good as a manual review.</p>
+      <div class="hypo-parts">
+        <div><span class="label">For</span><span>The resource manager handling staffing and RFP requests</span></div>
+        <div><span class="label">Outcome</span><span>Faster and more complete shortlists</span></div>
+        <div><span class="label">Measured by</span><span>Time to shortlist, and overlap with past human picks</span></div>
+        <div><span class="label">Proven when</span><span>On <span class="fill">[10]</span> past requests, the top 5 includes the people actually picked at least 80% of the time</span></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" data-title="KPIs" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Stretch · Value metrics</p>
+        <h2>How we'll measure it</h2>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>KPI</th><th>Why it matters</th><th class="num">Baseline</th><th class="num">Target</th></tr></thead>
+          <tbody>
+            <tr><td>Time to shortlist<span class="kpi-type">Efficiency</span></td><td>The core pain: hours of CV reading per complex request.</td><td class="num"><span class="fill">[Z h]</span></td><td class="num target">&lt; 15 min</td></tr>
+            <tr><td>Recall vs. past human picks<span class="kpi-type">Quality</span></td><td>Does the top 5 contain the people you would have chosen?</td><td class="num">n/a</td><td class="num target">≥ 80%</td></tr>
+            <tr><td>Shortlist to interview acceptance<span class="kpi-type">Quality</span></td><td>Are requesters happy with the proposed people?</td><td class="num"><span class="fill">[today %]</span></td><td class="num target">Same or better</td></tr>
+            <tr><td>Claims without CV evidence<span class="kpi-type">Trust</span></td><td>Every match must be backed by a quote from the CV.</td><td class="num">n/a</td><td class="num target">0</td></tr>
+            <tr><td>Share of team appearing in shortlists<span class="kpi-type">Fairness</span></td><td>Less visible people get considered too.</td><td class="num"><span class="fill">[measure]</span></td><td class="num target">Goes up</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-title="Risks and constraints" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Stretch · Risks and constraints</p>
+        <h2>Risks and how we handle them</h2>
+      </div>
+      <ul class="risks">
+        <li><h3>Personal data (GDPR)</h3><p>CVs and availability are personal data. <b>Use an approved tool and data location, limit access to the resource manager, inform employees and the works council where needed.</b></p><span class="sev hi">High</span></li>
+        <li><h3>Bias in matching</h3><p>Only skills, experience and languages count. <b>Name, age, gender, nationality and photo are ignored or removed before matching.</b></p><span class="sev hi">High</span></li>
+        <li><h3>Hallucinated skills</h3><p>A model may claim skills a CV doesn't show. <b>Every match cites CV text, and a human reviews the shortlist.</b></p><span class="sev md">Medium</span></li>
+        <li><h3>Outdated CVs</h3><p>Results are only as good as the CVs. <b>The agent flags old CVs, which helps keep them current.</b></p><span class="sev md">Medium</span></li>
+        <li><h3>Over-reliance</h3><p>The shortlist could be taken as final. <b>It is a decision aid. Selection stays with the resource manager.</b></p><span class="sev md">Medium</span></li>
+      </ul>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide" data-title="Scaling and next steps" hidden>
+      <div class="slide-head">
+        <p class="eyebrow">Stretch · Scaling and reuse</p>
+        <h2>Where it goes next</h2>
+      </div>
+      <div class="cols">
+        <div class="stack">
+          <p class="label">Reuse potential</p>
+          <ul class="reuse">
+            <li><b>Other groups</b><span>Same agent, each resource manager with their own CVs.</span></li>
+            <li><b>Skills gap analysis</b><span>What does the group lack compared with incoming demand?</span></li>
+            <li><b>Training plans</b><span>Turn recurring gaps into learning paths.</span></li>
+            <li><b>Bids and proposals</b><span>Build exemplary teams for RFPs in minutes.</span></li>
+            <li><b>CV quality</b><span>Prompt people to update missing or old CVs.</span></li>
+          </ul>
+        </div>
+        <div class="stack">
+          <p class="label">Next steps</p>
+          <ol class="next">
+            <li><b>Fill in the baseline numbers</b><span>Requests per month, share of complex ones, hours per complex request.</span></li>
+            <li><b>Collect 3–5 past requests as test cases</b><span>With the people actually picked, anonymised.</span></li>
+            <li><b>Confirm data and tooling</b><span>Where the CVs live, which AI tools are approved for personal data, how to read availability.</span></li>
+            <li><b>Build and test the prototype</b><span>Run it on the test cases and compare with past picks.</span></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="controls" aria-label="Slide navigation">
+    <button class="btn" id="prev" type="button" aria-label="Previous section">← <span class="txt">Back</span></button>
+    <div class="where">
+      <div class="where-text"><span class="count" id="count">01 / 11</span><span class="name" id="name">Overview</span></div>
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+    </div>
+    <button class="btn primary" id="next" type="button" aria-label="Next section"><span class="txt">Next</span> →</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var stage = document.getElementById('stage');
+  var toc = document.getElementById('toc');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var count = document.getElementById('count');
+  var name = document.getElementById('name');
+  var bar = document.getElementById('bar');
+  var total = slides.length;
+  var current = 0;
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+  slides.forEach(function (s, i) {
+    s.id = 's' + (i + 1);
+    var li = document.createElement('li');
+    var a = document.createElement('a');
+    a.href = '#s' + (i + 1);
+    a.innerHTML = '<span class="n">' + pad(i + 1) + '</span><span></span>';
+    a.lastChild.textContent = s.dataset.title;
+    a.addEventListener('click', function (e) { e.preventDefault(); go(i); });
+    li.appendChild(a);
+    toc.appendChild(li);
+  });
+  var links = toc.querySelectorAll('a');
+
+  function go(i) {
+    current = Math.max(0, Math.min(total - 1, i));
+    slides.forEach(function (s, k) { s.hidden = k !== current; });
+    links.forEach(function (a, k) {
+      if (k === current) a.setAttribute('aria-current', 'step'); else a.removeAttribute('aria-current');
+    });
+    count.textContent = pad(current + 1) + ' / ' + pad(total);
+    name.textContent = slides[current].dataset.title;
+    bar.style.width = ((current + 1) / total * 100) + '%';
+    prev.disabled = current === 0;
+    next.disabled = current === total - 1;
+    stage.scrollTop = 0;
+    try { history.replaceState(null, '', '#s' + (current + 1)); } catch (e) {}
+  }
+
+  prev.addEventListener('click', function () { go(current - 1); });
+  next.addEventListener('click', function () { go(current + 1); });
+  document.addEventListener('keydown', function (e) {
+    if (e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(total - 1); }
+  });
+
+  var m = /^#s(\d+)$/.exec(location.hash || '');
+  go(m ? parseInt(m[1], 10) - 1 : 0);
+})();
+</script>
