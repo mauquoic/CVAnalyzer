@@ -26,12 +26,14 @@ Don't read other files in `data/`, `.work/` or `reports/`. Don't write anywhere 
 | `partly met` | Related but weaker: an older version, an alternative outside "or similar", only a skills-list mention without any project, experience just below a stated minimum, a language at a "partly" level |
 | `not evidenced` | The CV doesn't show it. This is not a judgement that the person can't do it. |
 
+- **Neutral quotes.** When several passages prove the same thing, pick one without pronouns or personal details. For example, prefer "German (C2)" over "He speaks … German".
 - **Evidence.** Every `met` and `partly met` needs at least one quote, copied **character for character** from the CV text, short (a phrase or one line). A script checks every quote against the CV, so don't fix typos, translate or merge lines. If you need two separate parts, join them with `...`.
 - **Experience years.** Use a stated number if there is one. Otherwise calculate from project dates and set `"inferred": true` on that evidence, quoting the dates. Count only experience relevant to the requirement.
 - **Languages.**
   - `met`: native, fluent, business fluent, C1, C2, verhandlungssicher, fließend, Muttersprache
   - `partly met`: good, B1, B2, gut
   - `not evidenced`: basic, A1, A2, Grundkenntnisse, or not mentioned. Add a note with the level found.
+  - Listed without a level (e.g. "He speaks English, French and German"): `partly met`, with the note "no level stated".
 - **CV language.** CVs in German or English are assessed the same way. Evidence stays in the CV's language.
 
 ## Never

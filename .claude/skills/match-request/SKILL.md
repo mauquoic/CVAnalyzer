@@ -70,7 +70,8 @@ Write `reports/<run-id>.md` from `templates/match-report.md`:
   | `partial` | Partial fit |
   | `weak` | Weak fit |
 
-- **Coverage.** Every person on the team list appears exactly once: in the shortlist, "Everyone else assessed", "Not assessed" or the unavailable list.
+- **Coverage.** Every person on the team list appears exactly once: in the shortlist, "Everyone else assessed", "Not assessed" or "Unavailable" (only when availability was required).
+- **Unavailable but fitting.** When availability was required and the best skill fits are unavailable, name them in the summary as an option (e.g. "Lukas Brändle fits on skills, free from 01.01.2027"). Don't propose them.
 - **Quotes.** Copy the evidence quotes from the assessments. Don't rephrase them.
 - **Seniority.** Show seniority indications only as written by the assessor, labelled as an indication. Put the requested seniority mix in the summary as a point for the resource manager to decide.
 - **Language gaps.** For a `language_gap` person, write the note "language may be an issue: discuss with the requester".

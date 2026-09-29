@@ -9,9 +9,12 @@ Ranking rules (docs/guardrails.md):
       partial        at least half of the key-skill points
       weak           below that; listed, never proposed
   - Within a tier: key-skill points, then language points, nice-to-have points, baseline points.
-  - Seniority is never used. Availability only matters when request.json says it's required:
-    0 % free, below min_availability_pct, or available only after needed_from puts a person on the
-    unavailable list; unknown availability is kept and flagged.
+  - Seniority is never used. Availability only matters when request.json says it's required.
+    With a needed_from date, the team list's "available from" date decides (later = unavailable).
+    Without one, 0 % free means unavailable. Below min_availability_pct is unavailable.
+    Unknown availability is kept and flagged.
+  - Gaps are counted among the people who can be proposed, and mention how many unavailable
+    people would have met the requirement.
   - Team proposal: roles in request order, each takes its best not-yet-proposed people from the
     full, language_gap and partial tiers. Unfilled positions are reported as open.
 
@@ -45,12 +48,16 @@ def availability_status(p: dict, request: dict) -> tuple[str, str | None]:
     need_from, min_pct = request.get("needed_from"), request.get("min_availability_pct")
     if pct is None and not frm:
         return "unknown", f"Availability unknown ({p.get('availability_raw') or 'no entry'})"
-    if pct is not None and pct == 0 and not (frm and need_from and frm <= need_from):
-        return "unavailable", "0 % available"
-    if pct is not None and min_pct is not None and pct < min_pct:
+    if frm and need_from:
+        # The team list's "available from" date decides; the percentage is today's value.
+        if frm > need_from:
+            return "unavailable", f"Available from {frm}, needed from {need_from}"
+        if pct == 0:
+            return "available", None  # booked today, free by the start date
+    elif pct == 0:
+        return "unavailable", f"Staffed, available from {frm}" if frm else "0 % available"
+    if pct is not None and min_pct is not None and 0 < pct < min_pct:
         return "unavailable", f"{pct:g} % available, {min_pct:g} % needed"
-    if frm and need_from and frm > need_from:
-        return "unavailable", f"Available from {frm}, needed from {need_from}"
     return "available", None
 
 
@@ -138,16 +145,21 @@ def main() -> int:
                 proposed.append(r["key"])
                 proposed_keys.add(r["key"])
 
+        # Gaps count the people who can actually be proposed (available ones, when availability matters).
+        candidates = {r["key"] for r in rows}
         gaps = []
         for q in reqs:
-            n = sum(states.get(q["id"]) == "met" for states in assessments.values())
             if q["class"] == "baseline":
                 continue
+            n = sum(assessments[k].get(q["id"]) == "met" for k in candidates)
+            n_all = sum(states.get(q["id"]) == "met" for states in assessments.values())
+            extra = f" ({n_all - n} more among unavailable people)" if n_all > n else ""
             if n == 0:
-                gaps.append({"id": q["id"], "text": q["text"], "class": q["class"], "met_by": 0, "note": "Nobody meets this"})
+                gaps.append({"id": q["id"], "text": q["text"], "class": q["class"], "met_by": 0, "met_by_all": n_all,
+                             "note": ("Nobody available meets this" if request.get("availability_required") else "Nobody meets this") + extra})
             elif q["class"] == "key" and n < positions:
-                gaps.append({"id": q["id"], "text": q["text"], "class": q["class"], "met_by": n,
-                             "note": f"Only {n} people meet this, {positions} positions"})
+                gaps.append({"id": q["id"], "text": q["text"], "class": q["class"], "met_by": n, "met_by_all": n_all,
+                             "note": f"Only {n} of the candidates meet this, {positions} positions" + extra})
 
         roles_out.append({"id": role["id"], "title": role.get("title"), "positions": positions,
                           "shortlist": rows[:max(args.top, positions)], "all_ranked": rows,

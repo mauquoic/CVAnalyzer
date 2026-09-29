@@ -5,6 +5,7 @@ A complete, fictional data set for trying out and demonstrating `/match-request`
 | Path | Contents |
 |---|---|
 | `cvs/` | 10 one-slide PowerPoint CVs. `Markus_Mustermann_-_202501.pptx` and `Manuela_Mustermann_-_08.2023.pptx` were provided by the resource manager. The other 8 were generated from Markus's template with `make_sample_cvs.py`. |
+| `requests/` | Four test requests (T1–T4) used for the first end-to-end test runs on 29.09.2026. |
 | `team/team_list.xlsx` | The team list with dummy levels, assignments and availability as of 29.09.2026. Generated with `make_team.py`. |
 
 Designed test cases:

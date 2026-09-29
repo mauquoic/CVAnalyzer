@@ -102,6 +102,24 @@ class ToolsTest(unittest.TestCase):
         run("rank.py", run_dir, env=self.env)
         ranking = json.loads((run_dir / "ranking.json").read_text())
         self.assertEqual([u["key"] for u in ranking["unavailable"]], ["anna-maria-muller"])  # 0 %, free from Nov
+        self.assertIn("Available from 2026-11-01", ranking["unavailable"][0]["reason"])
+        # Needed from a date after she becomes free: available again.
+        req.update(needed_from="2026-11-15")
+        (run_dir / "request.json").write_text(json.dumps(req))
+        run("rank.py", run_dir, env=self.env)
+        self.assertEqual(json.loads((run_dir / "ranking.json").read_text())["unavailable"], [])
+
+    def test_gaps_count_only_available_people(self):
+        run_dir = self.fresh_run()
+        run("verify_evidence.py", run_dir, "--fix", env=self.env)
+        req = json.loads((run_dir / "request.json").read_text())
+        req.update(availability_required=True, needed_from="2026-10-15")   # Anna (the only Spark + AI person) is out
+        (run_dir / "request.json").write_text(json.dumps(req))
+        run("rank.py", run_dir, env=self.env)
+        gaps = {g["id"]: g for g in json.loads((run_dir / "ranking.json").read_text())["roles"][0]["gaps"]}
+        self.assertEqual(gaps["R11"]["met_by"], 0)                           # AI tooling: only Anna has it
+        self.assertEqual(gaps["R11"]["met_by_all"], 1)
+        self.assertIn("more among unavailable people", gaps["R11"]["note"])
 
     def test_filename_dates(self):
         sys.path.insert(0, str(ROOT / "tools"))

@@ -372,4 +372,7 @@ def name_match(team_name: str, other: str) -> str | None:
 
 
 def slug(name: str) -> str:
-    return "-".join(name_tokens(name)) or re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    """File-safe person key: lower case, accents removed, but spelling otherwise kept (Manuela stays manuela)."""
+    t = unicodedata.normalize("NFKD", name.lower().replace("ß", "ss"))
+    t = "".join(ch for ch in t if not unicodedata.combining(ch))
+    return re.sub(r"[^a-z0-9]+", "-", t).strip("-")

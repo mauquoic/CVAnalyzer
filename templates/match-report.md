@@ -58,6 +58,10 @@
 |---|---|---|---|---|---|
 {{EVERY OTHER ASSESSED PERSON, IN RANKING ORDER}}
 
+## Unavailable
+
+{{ONLY WHEN AVAILABILITY WAS REQUIRED: TABLE OF EVERY UNAVAILABLE PERSON WITH THE REASON FROM ranking.json; OTHERWISE REMOVE THIS SECTION}}
+
 ## Not assessed
 
 | Name | Reason |
@@ -66,7 +70,7 @@
 
 ## Data warnings
 
-{{OUTDATED CVS, PROBABLE NAME MATCHES TO CONFIRM, CVS MATCHING NOBODY, UNAVAILABLE PEOPLE, or "none"}}
+{{OUTDATED CVS, PROBABLE NAME MATCHES TO CONFIRM, CVS MATCHING NOBODY, or "none"}}
 
 ## How this report was produced
 
@@ -76,4 +80,4 @@ Every CV was checked against every requirement. A requirement counts as met only
 3. At least half the key skills.
 4. Below that.
 
-Within each tier, candidates are sorted by key skills, languages, nice-to-haves and baseline items. Seniority, age, gender, nationality and other personal attributes play no role.
+Within each tier, candidates are sorted by key skills, languages, nice-to-haves and baseline items. Seniority and personal characteristics play no role in the ranking.

@@ -51,6 +51,7 @@ The report is always worded as a recommendation ("proposed", "suggested"), never
   - **met:** native, fluent, business fluent, C1, C2, *verhandlungssicher*, *fließend*
   - **partly met:** good, B1, B2, *gut*
   - **not evidenced:** basic, A1, A2, *Grundkenntnisse*, or not mentioned
+  - **listed without a level** (e.g. "speaks English, French and German"): partly met, with the note "no level stated"
 - Someone who meets every key skill but misses a required language is **still shown**. They rank after candidates who meet everything and carry the note "language may be an issue: discuss with the requester".
 
 ## 7. Availability

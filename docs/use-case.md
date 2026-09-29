@@ -22,6 +22,46 @@ Given a staffing request, produce a Markdown report with a shortlist of people f
 
 ## 3. What gets automated
 
+### Workflow
+
+One `/match-request` run, from request to report. Rounded boxes are model steps, square boxes are deterministic scripts in `tools/`, and the hexagon is where the resource manager decides.
+
+```mermaid
+flowchart TD
+    REQ[/"Staffing request<br/>(file in data/requests/ or pasted text)"/]
+    CVS[("CVs (PowerPoint)<br/>data/cvs/ or samples/cvs/")]
+    TEAM[("Team list with availability (Excel)<br/>data/team/ or samples/team/")]
+
+    PREP["prepare_data.py<br/>link CVs to people by name, extract text,<br/>flag outdated CVs and unclear matches"]
+    TRIAGE("Triage the request<br/>Key · Nice to have · Baseline,<br/>alternatives, assumptions")
+    CONFIRM{{"Resource manager confirms<br/>or corrects the triage"}}
+    ASSESS("cv-assessor subagents, in parallel<br/>each CV × each requirement:<br/>met · partly met · not evidenced + quote")
+    VERIFY["verify_evidence.py<br/>every quote must appear in the CV text;<br/>unverifiable claims are downgraded"]
+    RANK["rank.py<br/>tiers: full → language gap → partial → weak;<br/>availability filter if required;<br/>propose team, list gaps. No seniority."]
+    WRITE("Write the report<br/>from templates/match-report.md,<br/>in the request's language")
+    CHECK["check_report.py<br/>everyone listed, no placeholders,<br/>protected-attribute wording flagged"]
+    REPORT[/"reports/&lt;run-id&gt;.md"/]
+    DECIDE{{"Resource manager decides:<br/>selection, seniority mix,<br/>what goes to the requester"}}
+
+    CVS --> PREP
+    TEAM --> PREP
+    REQ --> TRIAGE
+    PREP --> TRIAGE
+    TRIAGE --> CONFIRM
+    CONFIRM -- "changes" --> TRIAGE
+    CONFIRM -- "confirmed" --> ASSESS
+    ASSESS --> VERIFY
+    VERIFY -- "quotes not found:<br/>re-assess once" --> ASSESS
+    VERIFY --> RANK
+    RANK --> WRITE
+    WRITE --> CHECK
+    CHECK -- "errors" --> WRITE
+    CHECK --> REPORT
+    REPORT --> DECIDE
+```
+
+### Capabilities
+
 | # | Capability | Result |
 |---|---|---|
 | 1 | **Understand the request** | A structured requirement list: roles and headcount, skills, experience, languages, availability need, other constraints. A requested seniority mix is recorded but not used for ranking (see §4). |

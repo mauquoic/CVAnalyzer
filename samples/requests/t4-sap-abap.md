@@ -1,0 +1,1 @@
+We are looking for one SAP ABAP developer with S/4HANA migration experience for a client in Geneva. French is required, English is a plus. Availability doesn't matter yet, we just need a profile for a proposal.
