@@ -103,6 +103,25 @@ class ToolsTest(unittest.TestCase):
         ranking = json.loads((run_dir / "ranking.json").read_text())
         self.assertEqual([u["key"] for u in ranking["unavailable"]], ["anna-maria-muller"])  # 0 %, free from Nov
 
+    def test_filename_dates(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        from prepare_data import filename_date
+        cases = {"Markus_Mustermann_-_202501": "2025-01-01", "Manuela_Mustermann_-_08.2023": "2023-08-01",
+                 "Lukas_Braendle_2026-03": "2026-03-01", "X_20250110": "2025-01-10",
+                 "CV Jonas Peter Becker": None, "Room_2019": None}
+        for stem, expected in cases.items():
+            self.assertEqual(filename_date(Path(stem + ".pptx")), expected, stem)
+
+    def test_sample_set_links_completely(self):
+        env = {**os.environ, "CVMATCH_WORK": str(self.tmp / "samples-work")}
+        out = run("prepare_data.py", "--cvs", ROOT / "samples" / "cvs", "--team", ROOT / "samples" / "team", env=env)
+        self.assertEqual(out.returncode, 0, out.stdout + out.stderr)
+        people = json.loads((self.tmp / "samples-work" / "manifest.json").read_text())["people"]
+        self.assertEqual(len(people), 10)
+        self.assertTrue(all(p["status"] == "ok" for p in people), [p for p in people if p["status"] != "ok"])
+        self.assertEqual(sorted(p["name"] for p in people if p["availability_pct"] == 100.0),
+                         ["Aylin Demir", "Elena Rossi", "Nikolai Petrov"])
+
     def test_check_report(self):
         run_dir = self.fresh_run()
         run("verify_evidence.py", run_dir, "--fix", env=self.env)

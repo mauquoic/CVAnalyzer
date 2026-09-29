@@ -31,7 +31,11 @@ from common import (CV_DIR, CV_EXTENSIONS, OUTDATED_MONTHS, ROOT, TEAM_DIR, TEAM
                     _csv_rows, _xlsx_rows, extract_text, map_columns, name_match, parse_availability,
                     parse_date, read_json, slug, write_json)
 
-FILENAME_DATE = re.compile(r"[_\- ](\d{4})-(\d{2})(?:-(\d{2}))?(?=$|[_\- ])")
+# Dates in CV file names: 2025-03, 2025-03-10, 202501, 20250110, 08.2023, 08-2023, 11_2024.
+FILENAME_DATES = [
+    (re.compile(r"(?<!\d)(20\d{2})[-_.]?(0[1-9]|1[0-2])(?:[-_.]?(0[1-9]|[12]\d|3[01]))?(?!\d)"), (1, 2, 3)),
+    (re.compile(r"(?<!\d)(0[1-9]|1[0-2])[-_.](20\d{2})(?!\d)"), (2, 1, None)),
+]
 LEVELS = {"manual": 5, "column": 4, "id": 4, "exact": 3, "strong": 2, "probable": 1}
 
 
@@ -98,8 +102,19 @@ def cv_files(cv_dir: Path) -> list[Path]:
 
 
 def filename_date(path: Path) -> str | None:
-    m = FILENAME_DATE.search(path.stem)
-    return f"{m.group(1)}-{m.group(2)}-{m.group(3) or '01'}" if m else None
+    """The last date found in the file name, as YYYY-MM-DD (day 01 if only a month is given)."""
+    found = []
+    for rx, (y, m, d) in FILENAME_DATES:
+        for hit in rx.finditer(path.stem):
+            day = hit.group(d) if d and hit.group(d) else "01"
+            found.append((hit.start(), f"{hit.group(y)}-{hit.group(m)}-{day}"))
+    return max(found)[1] if found else None
+
+
+def strip_date(stem: str) -> str:
+    for rx, _ in FILENAME_DATES:
+        stem = rx.sub("", stem)
+    return stem
 
 
 def head_lines(text: str, n: int = 15) -> list[str]:
@@ -127,7 +142,7 @@ def main() -> int:
             texts[f] = (None, None, str(e) or type(e).__name__)
 
     if not team:
-        team = [{"key": slug(f.stem) or f.stem, "name": re.sub(r"[_\-]+", " ", FILENAME_DATE.sub("", f.stem)).strip(),
+        team = [{"key": slug(f.stem) or f.stem, "name": re.sub(r"[_\-]+", " ", strip_date(f.stem)).strip(),
                  "id": None, "availability_raw": None, "availability_pct": None, "available_from": None,
                  "level": None, "cv_file_hint": None, "extra": {}} for f in files]
 
@@ -150,7 +165,7 @@ def main() -> int:
             cands = [(i, "id") for i, p in enumerate(team) if p["id"] and re.match(rf"{re.escape(p['id'].lower())}(?![a-z0-9])", f.stem.lower())]
         if not cands:
             for i, p in enumerate(team):
-                if p["name"] and (lvl := name_match(p["name"], FILENAME_DATE.sub("", f.stem))):
+                if p["name"] and (lvl := name_match(p["name"], strip_date(f.stem))):
                     cands.append((i, lvl))
         if not cands and texts[f][0]:
             for i, p in enumerate(team):

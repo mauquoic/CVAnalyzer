@@ -17,6 +17,7 @@ Read these before changing agent behavior:
 python3 -m unittest discover -s tests                              # all tests (synthetic fixtures, no real data)
 python3 -m unittest tests.test_tools.ToolsTest.test_rank_order     # one test
 python3 tools/prepare_data.py                                      # link team list and CVs, extract text into .work/
+python3 tools/prepare_data.py --cvs samples/cvs --team samples/team   # same, on the fictional sample set
 python3 tools/verify_evidence.py .work/runs/<run-id> [--fix]       # check assessment quotes against CV text
 python3 tools/rank.py .work/runs/<run-id>                          # rank and propose a team -> ranking.json
 python3 tools/check_report.py reports/<run-id>.md .work/runs/<run-id>
@@ -54,6 +55,7 @@ The `/match-request` skill (`.claude/skills/match-request/SKILL.md`) orchestrate
 - **Complete coverage.** Every person on the team list appears in the report.
 - **Seniority** is recorded, never ranked. At most there is a labelled indication with a quote.
 - **Personal data.** `data/cvs/`, `data/team/`, `data/requests/` (except the example), `reports/` and `.work/` are gitignored. Never commit real CVs, names or reports. `tests/fixtures/` is synthetic.
+- **Sample data.** `samples/` holds a committed, fictional set of 10 PowerPoint CVs and an Excel team list (see `samples/README.md`). `/match-request <request> --samples` runs on it. The deny rule on `data/` also blocks Claude from copying files there, so the user places real data in `data/` themselves.
 
 ## The brief deck (`docs/cv-match-agent-brief.html`)
 

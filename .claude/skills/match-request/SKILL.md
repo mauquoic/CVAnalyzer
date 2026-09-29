@@ -1,7 +1,7 @@
 ---
 name: match-request
 description: Match a staffing request (skills, experience, languages, headcount) against the team's CVs and write a Markdown shortlist report with evidence. Use when the user wants to find, match or shortlist people for a request, RFP, project or role.
-argument-hint: "[request file in data/requests/ or pasted request text]"
+argument-hint: "[request file in data/requests/ or pasted request text] [--samples]"
 allowed-tools: Read, Write, Glob, Grep, Bash(python3 tools/*)
 ---
 
@@ -19,9 +19,9 @@ Request: $ARGUMENTS
 
 ## 2. Prepare the data
 
-Run `python3 tools/prepare_data.py`.
+Run `python3 tools/prepare_data.py`. If the arguments contain `--samples`, use the fictional sample set instead: `python3 tools/prepare_data.py --cvs samples/cvs --team samples/team`, and say in the report that sample data was used.
 
-- Exit code 1 means nobody can be assessed. Tell the user what is missing (CVs in `data/cvs/`, the team list in `data/team/`) and stop.
+- Exit code 1 means nobody can be assessed. Tell the user what is missing (CVs in `data/cvs/`, the team list in `data/team/`), mention that `--samples` runs on the sample data in `samples/`, and stop.
 - Keep the printed warnings (probable name matches, CVs matching nobody, outdated CVs). They go into the report. Don't try to fix data.
 
 ## 3. Triage the request
